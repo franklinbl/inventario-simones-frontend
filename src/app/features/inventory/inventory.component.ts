@@ -19,6 +19,7 @@ export class InventoryComponent implements OnInit {
   products: ProductAttributes[] = [];
   isModalOpen = false;
   productForm: FormGroup;
+  editingProductId: number | null = null;
 
   constructor() {
     this.productForm = this.fb.group({
@@ -44,27 +45,58 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  openModal(): void {
+  openModal(product?: ProductAttributes): void {
+    if (product) {
+      this.editingProductId = product.id;
+      this.productForm.patchValue({
+        name: product.name,
+        description: product.description,
+        total_quantity: product.total_quantity,
+        available_quantity: product.available_quantity
+      });
+    } else {
+      this.editingProductId = null;
+      this.productForm.reset();
+    }
     this.isModalOpen = true;
   }
 
   closeModal(): void {
     this.isModalOpen = false;
+    this.editingProductId = null;
     this.productForm.reset();
   }
 
   onSubmit(): void {
     if (this.productForm.valid) {
-      const newProduct = this.productForm.value;
-      this.inventoryService.createProduct(newProduct).subscribe({
-        next: (response) => {
-          this.products.push(response);
-          this.closeModal();
-        },
-        error: (error) => {
-          console.error('Error al crear producto:', error);
-        }
-      });
+      const productData = this.productForm.value;
+
+      if (this.editingProductId) {
+        // Actualizar producto existente
+        this.inventoryService.updateProduct(this.editingProductId, productData).subscribe({
+          next: (updatedProduct) => {
+            const index = this.products.findIndex(p => p.id === this.editingProductId);
+            if (index !== -1) {
+              this.products[index] = updatedProduct;
+            }
+            this.closeModal();
+          },
+          error: (error) => {
+            console.error('Error al actualizar producto:', error);
+          }
+        });
+      } else {
+        // Crear nuevo producto
+        this.inventoryService.createProduct(productData).subscribe({
+          next: (response) => {
+            this.products.push(response);
+            this.closeModal();
+          },
+          error: (error) => {
+            console.error('Error al crear producto:', error);
+          }
+        });
+      }
     }
   }
 
@@ -80,5 +112,9 @@ export class InventoryComponent implements OnInit {
       return 'El valor debe ser mayor o igual a 0';
     }
     return '';
+  }
+
+  get modalTitle(): string {
+    return this.editingProductId ? 'Editar Producto' : 'Nuevo Producto';
   }
 }

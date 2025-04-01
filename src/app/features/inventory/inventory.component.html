@@ -13,6 +13,7 @@
           <th>Descripción</th>
           <th>Cantidad Total</th>
           <th>Cantidad Disponible</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +22,11 @@
           <td>{{ product.description }}</td>
           <td>{{ product.total_quantity }}</td>
           <td>{{ product.available_quantity }}</td>
+          <td>
+            <button class="edit-button" (click)="openModal(product)">
+              Editar
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -31,7 +37,7 @@
 <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>Nuevo Producto</h3>
+      <h3>{{ modalTitle }}</h3>
       <button class="close-button" (click)="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -95,7 +101,9 @@
 
         <div class="form-actions">
           <button type="button" class="secondary-button" (click)="closeModal()">Cancelar</button>
-          <button type="submit" class="primary-button" [disabled]="productForm.invalid">Guardar</button>
+          <button type="submit" class="primary-button" [disabled]="productForm.invalid">
+            {{ editingProductId ? 'Actualizar' : 'Guardar' }}
+          </button>
         </div>
       </form>
     </div>

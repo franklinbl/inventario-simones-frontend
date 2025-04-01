@@ -18,4 +18,8 @@ export class InventoryService {
   createProduct(product: Omit<ProductAttributes, 'id'>): Observable<ProductAttributes> {
     return this.http.post<ProductAttributes>(this.apiUrl, product);
   }
+
+  updateProduct(id: number, product: Omit<ProductAttributes, 'id'>): Observable<ProductAttributes> {
+    return this.http.put<ProductAttributes>(`${this.apiUrl}/${id}`, product);
+  }
 }
