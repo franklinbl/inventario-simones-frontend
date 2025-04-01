@@ -4,4 +4,7 @@ export interface ProductAttributes {
   description: string;
   total_quantity: number;
   available_quantity: number;
+  RentalProduct? : {
+    quantity: number
+  }
 }

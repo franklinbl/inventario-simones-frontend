@@ -34,9 +34,14 @@
               <div class="details-content">
                 <div class="container-products-list">
                   <h3>Productos Rentados</h3>
-                  <button class="primary-button" (click)="rentalCompleted(rental.id)">
-                    Productos entregados
-                  </button>
+                  <div class="button-group" *ngIf="rental.status !== 'completed'">
+                    <button class="secondary-button" (click)="openModal(rental)">
+                      Editar
+                    </button>
+                    <button class="primary-button" (click)="rentalCompleted(rental.id)">
+                      Productos entregados
+                    </button>
+                  </div>
                 </div>
                 <table class="details-table">
                   <thead>
@@ -49,7 +54,7 @@
                   <tbody>
                     <tr *ngFor="let product of rental.products">
                       <td>{{ product.name }}</td>
-                      <td>{{ product.available_quantity }}</td>
+                      <td>{{ product.RentalProduct?.quantity }}</td>
                       <td>{{ product.description }}</td>
                     </tr>
                   </tbody>
@@ -67,11 +72,11 @@
 <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>Nueva Renta</h3>
+      <h3>{{ isEditing ? 'Editar Renta' : 'Nueva Renta' }}</h3>
       <button class="close-button" (click)="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <form [formGroup]="rentalForm" (ngSubmit)="onSubmit()" class="rental-form">
+      <form [formGroup]="rentalForm" class="rental-form">
         <div class="form-group">
           <label for="customer_name">Nombre del Cliente</label>
           <input
@@ -194,13 +199,19 @@
               </div>
               <div class="product-quantity">
                 <div class="form-group">
-                  <small>Cantidad:</small>
+                  <label for="quantity"><small>Cantidad</small></label>
                   <input
                     type="number"
+                    id="quantity"
+                    [min]="1"
+                    [max]="item.product.available_quantity"
                     [formControl]="$any(productsFormArray.at(i).get('quantity'))"
                     class="form-control"
                     placeholder="10"
                   >
+                  <div class="error-message" *ngIf="productsFormArray.at(i).get('quantity')?.invalid && productsFormArray.at(i).get('quantity')?.touched">
+                    {{ getQuantityErrorMessage(i) }}
+                  </div>
                 </div>
                 <button mat-icon-button color="warn" (click)="removeProduct(item.product.id)">
                   <mat-icon>delete</mat-icon>
@@ -211,8 +222,10 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" class="secondary-button" (click)="closeModal()">Cancelar</button>
-          <button type="submit" class="primary-button" [disabled]="rentalForm.invalid">Guardar</button>
+          <button class="secondary-button" (click)="closeModal()">Cancelar</button>
+          <button class="primary-button" (click)="onSubmit()" [disabled]="selectedProducts.length === 0">
+            {{ isEditing ? 'Actualizar' : 'Guardar' }}
+          </button>
         </div>
       </form>
     </div>

@@ -19,7 +19,11 @@ export class RentalService {
     return this.http.post<RentalAttributes>(this.apiUrl, rental);
   }
 
-  completedRental(rentalId: number): Observable<RentalAttributes> {
-    return this.http.put<RentalAttributes>(`${this.apiUrl}/${rentalId}/complete`, null);
+  updateRental(id: number, rentalData: Partial<RentalAttributes>): Observable<RentalAttributes> {
+    return this.http.put<RentalAttributes>(`${this.apiUrl}/${id}`, rentalData);
+  }
+
+  completedRental(id: number): Observable<RentalAttributes> {
+    return this.http.put<RentalAttributes>(`${this.apiUrl}/${id}/complete`, {});
   }
 }

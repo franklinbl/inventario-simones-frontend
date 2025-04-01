@@ -39,6 +39,8 @@ export class RentalsComponent implements OnInit {
 
   rentals: (RentalAttributes & { expanded?: boolean })[] = [];
   isModalOpen = false;
+  isEditing = false;
+  currentRentalId: number | null = null;
   rentalForm: FormGroup;
   products: ProductAttributes[] = [];
   filteredProducts: Observable<ProductAttributes[]>;
@@ -54,7 +56,7 @@ export class RentalsComponent implements OnInit {
       start_date: ['', [Validators.required]],
       end_date: ['', [Validators.required]],
       // total_amount: [null, [Validators.required, Validators.min(0)]],
-      status: ['pending', [Validators.required]],
+      // status: ['pending', [Validators.required]],
       products: this.fb.array([])
     });
 
@@ -69,7 +71,11 @@ export class RentalsComponent implements OnInit {
         const index = this.productsFormArray.length;
         this.productsFormArray.push(this.fb.group({
           product_id: [product.id],
-          quantity: [null, [Validators.required, Validators.min(1)]]
+          quantity: [null, [
+            Validators.required,
+            Validators.min(1),
+            this.maxStockValidator(product.available_quantity)
+          ]]
         }));
         this.selectedProducts.push({ product, index });
         this.selectedProductCtrl.setValue(null); // Limpiar la selección
@@ -120,13 +126,58 @@ export class RentalsComponent implements OnInit {
     rental.expanded = !rental.expanded;
   }
 
-  openModal(): void {
+  openModal(rental?: RentalAttributes): void {
     this.isModalOpen = true;
+    if (rental) {
+      this.isEditing = true;
+      this.currentRentalId = rental.id;
+      this.rentalForm.patchValue({
+        customer_name: rental.customer_name,
+        start_date: rental.start_date,
+        end_date: rental.end_date,
+        status: rental.status
+      });
+
+      // Limpiar productos existentes
+      this.selectedProducts = [];
+      while (this.productsFormArray.length) {
+        this.productsFormArray.removeAt(0);
+      }
+
+      // Agregar productos del rental
+      rental.products.forEach(product => {
+        const index = this.productsFormArray.length;
+        const currentQuantity = product.RentalProduct?.quantity || 0;
+        this.productsFormArray.push(this.fb.group({
+          product_id: [product.id],
+          quantity: [currentQuantity, [
+            Validators.required,
+            Validators.min(1),
+            this.maxStockValidator(product.available_quantity, currentQuantity)
+          ]]
+        }));
+        this.selectedProducts.push({ product, index });
+      });
+    } else {
+      this.isEditing = false;
+      this.currentRentalId = null;
+      this.rentalForm.reset();
+      this.selectedProducts = [];
+      while (this.productsFormArray.length) {
+        this.productsFormArray.removeAt(0);
+      }
+    }
   }
 
   closeModal(): void {
     this.isModalOpen = false;
+    this.isEditing = false;
+    this.currentRentalId = null;
     this.rentalForm.reset();
+    this.selectedProducts = [];
+    while (this.productsFormArray.length) {
+      this.productsFormArray.removeAt(0);
+    }
   }
 
   updateQuantity(productId: number, event: Event): void {
@@ -151,17 +202,54 @@ export class RentalsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.rentalForm.valid && this.selectedProducts.length > 0) {
+    if (this.selectedProducts.length > 0) {
       const rentalData = this.rentalForm.value;
-      this.rentalService.createRental(rentalData).subscribe({
-        next: (response) => {
-          this.rentals.push(response);
-          this.closeModal();
-        },
-        error: (error) => {
-          console.error('Error al crear renta:', error);
-        }
+
+      // Validar que los campos requeridos estén llenos
+      if (!rentalData.customer_name || !rentalData.start_date || !rentalData.end_date) {
+        return;
+      }
+
+      // Validar que todas las cantidades sean válidas
+      const hasInvalidQuantities = this.productsFormArray.controls.some(control => {
+        const quantity = control.get('quantity')?.value;
+        const product = this.selectedProducts.find(sp => sp.index === this.productsFormArray.controls.indexOf(control))?.product;
+        if (!product) return true;
+
+        const currentQuantity = product.RentalProduct?.quantity || 0;
+        const maxAllowed = this.isEditing ? product.available_quantity + currentQuantity : product.available_quantity;
+
+        return quantity <= 0 || quantity > maxAllowed;
       });
+
+      if (hasInvalidQuantities) {
+        return;
+      }
+
+      if (this.isEditing && this.currentRentalId) {
+        this.rentalService.updateRental(this.currentRentalId, rentalData).subscribe({
+          next: (response) => {
+            const index = this.rentals.findIndex(r => r.id === this.currentRentalId);
+            if (index !== -1) {
+              this.rentals[index] = response;
+            }
+            this.closeModal();
+          },
+          error: (error) => {
+            console.error('Error al actualizar renta:', error);
+          }
+        });
+      } else {
+        this.rentalService.createRental(rentalData).subscribe({
+          next: (response) => {
+            this.rentals.push(response);
+            this.closeModal();
+          },
+          error: (error) => {
+            console.error('Error al crear renta:', error);
+          }
+        });
+      }
     }
   }
 
@@ -181,6 +269,25 @@ export class RentalsComponent implements OnInit {
     }
     if (control?.hasError('min')) {
       return 'El valor debe ser mayor o igual a 0';
+    }
+    if (control?.hasError('maxStock')) {
+      const error = control.errors?.['maxStock'];
+      return `La cantidad no puede ser mayor al stock disponible (${error.max})`;
+    }
+    return '';
+  }
+
+  getQuantityErrorMessage(index: number): string {
+    const control = this.productsFormArray.at(index).get('quantity');
+    if (control?.hasError('required')) {
+      return 'La cantidad es requerida';
+    }
+    if (control?.hasError('min')) {
+      return 'La cantidad debe ser mayor a 0';
+    }
+    if (control?.hasError('maxStock')) {
+      const error = control.errors?.['maxStock'];
+      return `La cantidad no puede ser mayor al stock disponible (${error.max})`;
     }
     return '';
   }
@@ -224,5 +331,16 @@ export class RentalsComponent implements OnInit {
         console.error('Error al cerrar una renta:', error);
       }
     });
+  }
+
+  maxStockValidator(maxStock: number, currentRentalQuantity: number = 0) {
+    return (control: FormControl) => {
+      const value = control.value;
+      const maxAllowed = this.isEditing ? maxStock + currentRentalQuantity : maxStock;
+      if (value > maxAllowed) {
+        return { maxStock: { max: maxAllowed, actual: value } };
+      }
+      return null;
+    };
   }
 }
