@@ -1,0 +1,17 @@
+@use '../../../styles/variables' as *;
+
+.inventory-container {
+  padding: $spacing-lg;
+}
+
+h1 {
+  margin-bottom: $spacing-lg;
+  color: $text-primary;
+}
+
+.content {
+  background-color: $surface-color;
+  padding: $spacing-lg;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+}

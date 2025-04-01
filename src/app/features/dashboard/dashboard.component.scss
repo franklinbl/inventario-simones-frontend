@@ -1,0 +1,40 @@
+@use '../../../styles/variables' as *;
+
+.dashboard-container {
+  padding: $spacing-lg;
+}
+
+h1 {
+  margin-bottom: $spacing-lg;
+  color: $text-primary;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-md;
+}
+
+.dashboard-card {
+  background-color: $surface-color;
+  padding: $spacing-lg;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+  transition: $transition-base;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    transform: translateY(-2px);
+  }
+
+  h3 {
+    color: $text-secondary;
+    margin-bottom: $spacing-sm;
+  }
+
+  .number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: $primary-color;
+  }
+}

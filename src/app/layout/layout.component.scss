@@ -1,0 +1,14 @@
+@use '../../styles/variables' as *;
+
+.layout-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md;
+  background-color: $background-color;
+}

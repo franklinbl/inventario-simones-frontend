@@ -1,0 +1,27 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <h2 *ngIf="!isCollapsed">Simones</h2>
+    <button class="toggle-btn" (click)="toggleSidebar()">
+      {{ isCollapsed ? '→' : '←' }}
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+      <span class="icon">📊</span>
+      <span *ngIf="!isCollapsed">Dashboard</span>
+    </a>
+    <a routerLink="/inventory" routerLinkActive="active" class="nav-item">
+      <span class="icon">📦</span>
+      <span *ngIf="!isCollapsed">Inventario</span>
+    </a>
+    <a routerLink="/events" routerLinkActive="active" class="nav-item">
+      <span class="icon">🎉</span>
+      <span *ngIf="!isCollapsed">Eventos</span>
+    </a>
+    <a routerLink="/reports" routerLinkActive="active" class="nav-item">
+      <span class="icon">📈</span>
+      <span *ngIf="!isCollapsed">Reportes</span>
+    </a>
+  </nav>
+</aside>
