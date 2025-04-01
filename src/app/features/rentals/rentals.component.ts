@@ -50,13 +50,11 @@ export class RentalsComponent implements OnInit {
 
   constructor() {
     this.rentalForm = this.fb.group({
-      customer_name: ['', [Validators.required, Validators.minLength(3)]],
-      // client_email: ['', [Validators.required, Validators.email]],
-      // client_phone: ['', [Validators.required, Validators.pattern(/^\+?[1-9]\d{1,14}$/)]],
+      client_name: ['', [Validators.required, Validators.minLength(3)]],
+      client_phone: ['', [Validators.required]],
       start_date: ['', [Validators.required]],
       end_date: ['', [Validators.required]],
-      // total_amount: [null, [Validators.required, Validators.min(0)]],
-      // status: ['pending', [Validators.required]],
+      notes: [''],
       products: this.fb.array([])
     });
 
@@ -132,7 +130,7 @@ export class RentalsComponent implements OnInit {
       this.isEditing = true;
       this.currentRentalId = rental.id;
       this.rentalForm.patchValue({
-        customer_name: rental.customer_name,
+        client_name: rental.client_name,
         start_date: rental.start_date,
         end_date: rental.end_date,
         status: rental.status
@@ -206,7 +204,7 @@ export class RentalsComponent implements OnInit {
       const rentalData = this.rentalForm.value;
 
       // Validar que los campos requeridos estén llenos
-      if (!rentalData.customer_name || !rentalData.start_date || !rentalData.end_date) {
+      if (!rentalData.client_name || !rentalData.start_date || !rentalData.end_date) {
         return;
       }
 
@@ -382,5 +380,13 @@ export class RentalsComponent implements OnInit {
         alert('Ocurrió un error al intentar abrir el PDF.');
       }
     });
+  }
+
+  calculateTotalPrice(rental: RentalAttributes): number {
+    return rental.products.reduce((total, product) => {
+      const quantity = product.RentalProduct?.quantity || 0;
+      const price = product.price || 0;
+      return total + (quantity * price);
+    }, 0);
   }
 }
