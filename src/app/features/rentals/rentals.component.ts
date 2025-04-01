@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule, FormControl, FormArray } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -342,5 +342,45 @@ export class RentalsComponent implements OnInit {
       }
       return null;
     };
+  }
+
+  downloadInvoice(rental: RentalAttributes) {
+    this.rentalService.downloadInvoice(rental.id).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        const blob = response.body;
+        if (!blob) {
+          console.error('No se recibió el PDF');
+          return;
+        }
+        const contentDisposition = response.headers.get('Content-Disposition');
+
+        // Extraer el nombre del archivo del encabezado Content-Disposition
+        let fileName = 'archivo.pdf'; // Valor por defecto
+        if (contentDisposition && contentDisposition.includes('filename=')) {
+          fileName = contentDisposition.split('filename=')[1].split(';')[0].replace(/"/g, '');
+          console.log(fileName);
+        }
+
+        // Crear un objeto URL temporal para el Blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Crear un enlace dinámico
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName; // Asignar el nombre del archivo
+
+        // Simular un clic en el enlace para iniciar la descarga
+        document.body.appendChild(a);
+        a.click();
+
+        // Limpiar el enlace y liberar el objeto URL
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error al obtener el PDF:', err);
+        alert('Ocurrió un error al intentar abrir el PDF.');
+      }
+    });
   }
 }

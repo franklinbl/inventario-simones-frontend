@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { RentalAttributes } from '../models/rental.model';
@@ -25,5 +25,12 @@ export class RentalService {
 
   completedRental(id: number): Observable<RentalAttributes> {
     return this.http.put<RentalAttributes>(`${this.apiUrl}/${id}/complete`, {});
+  }
+
+  downloadInvoice(rentalId: number): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.apiUrl}/${rentalId}/invoice`, {
+      responseType: 'blob',
+      observe: 'response'
+    });
   }
 }
