@@ -32,7 +32,12 @@
           <tr class="details-row" *ngIf="rental.expanded">
             <td colspan="4">
               <div class="details-content">
-                <h3>Productos Rentados</h3>
+                <div class="container-products-list">
+                  <h3>Productos Rentados</h3>
+                  <button class="primary-button" (click)="rentalCompleted(rental.id)">
+                    Productos entregados
+                  </button>
+                </div>
                 <table class="details-table">
                   <thead>
                     <tr>

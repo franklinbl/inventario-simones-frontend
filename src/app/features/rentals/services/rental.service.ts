@@ -18,4 +18,8 @@ export class RentalService {
   createRental(rental: Omit<RentalAttributes, 'id'>): Observable<RentalAttributes> {
     return this.http.post<RentalAttributes>(this.apiUrl, rental);
   }
+
+  completedRental(rentalId: number): Observable<RentalAttributes> {
+    return this.http.put<RentalAttributes>(`${this.apiUrl}/${rentalId}/complete`, null);
+  }
 }

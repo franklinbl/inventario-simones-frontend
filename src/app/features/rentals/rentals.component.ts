@@ -214,4 +214,15 @@ export class RentalsComponent implements OnInit {
         return status;
     }
   }
+
+  rentalCompleted(rentalId: number) {
+    this.rentalService.completedRental(rentalId).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {
+        console.error('Error al cerrar una renta:', error);
+      }
+    });
+  }
 }
