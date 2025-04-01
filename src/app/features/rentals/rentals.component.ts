@@ -14,6 +14,7 @@ import { RentalAttributes } from './models/rental.model';
 export class RentalsComponent implements OnInit {
   private rentalService = inject(RentalService);
   rentals: (RentalAttributes & { expanded?: boolean })[] = [];
+  isModalOpen = false;
 
   ngOnInit(): void {
     this.loadRentals();
@@ -32,6 +33,14 @@ export class RentalsComponent implements OnInit {
 
   toggleDetails(rental: RentalAttributes & { expanded?: boolean }): void {
     rental.expanded = !rental.expanded;
+  }
+
+  openModal(): void {
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
   }
 
   getStatusClass(status: string): string {

@@ -1,5 +1,10 @@
 <div class="container">
-  <h2>Inventario de Productos</h2>
+  <div class="header">
+    <h2>Inventario de Productos</h2>
+    <button class="primary-button" (click)="openModal()">
+      Nuevo Producto
+    </button>
+  </div>
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -21,5 +26,19 @@
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Nuevo Producto</h3>
+      <button class="close-button" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Aquí irá el formulario -->
+      <p>Contenido del modal próximamente...</p>
+    </div>
   </div>
 </div>

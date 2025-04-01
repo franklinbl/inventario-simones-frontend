@@ -14,6 +14,7 @@ import { ProductAttributes } from './models/product.model';
 export class InventoryComponent implements OnInit {
   private inventoryService = inject(InventoryService);
   products: ProductAttributes[] = [];
+  isModalOpen = false;
 
   ngOnInit(): void {
     this.loadProducts();
@@ -28,5 +29,13 @@ export class InventoryComponent implements OnInit {
         console.error('Error al cargar productos:', error);
       }
     });
+  }
+
+  openModal(): void {
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
   }
 }
