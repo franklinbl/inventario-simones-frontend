@@ -1,6 +1,25 @@
-<div class="inventory-container">
-  <h1>Gestión de Inventario</h1>
-  <div class="content">
-    <p>Contenido del inventario próximamente...</p>
+<div class="container">
+  <h2>Inventario de Productos</h2>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Cantidad Total</th>
+          <th>Cantidad Disponible</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.id }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.total_quantity }}</td>
+          <td>{{ product.available_quantity }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
