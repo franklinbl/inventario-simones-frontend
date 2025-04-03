@@ -104,7 +104,7 @@ export class RentalsComponent implements OnInit {
   private loadProducts(): void {
     this.inventoryService.getProducts().subscribe({
       next: (data) => {
-        this.products = data;
+        this.products = data.products;
       },
       error: (error) => {
         console.error('Error al cargar productos:', error);

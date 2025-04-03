@@ -32,6 +32,38 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- Pagination Controls -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button
+        class="pagination-button"
+        [disabled]="!hasPreviousPage"
+        (click)="changePage(currentPage - 1)"
+      >
+        Anterior
+      </button>
+
+      <div class="page-numbers">
+        <button
+          *ngFor="let page of getPages()"
+          class="page-number"
+          [class.active]="page === currentPage"
+          [class.ellipsis]="page === -1"
+          (click)="page !== -1 && changePage(page)"
+          [disabled]="page === -1"
+        >
+          {{ page === -1 ? '...' : page }}
+        </button>
+      </div>
+
+      <button
+        class="pagination-button"
+        [disabled]="!hasNextPage"
+        (click)="changePage(currentPage + 1)"
+      >
+        Siguiente
+      </button>
+    </div>
   </div>
 </div>
 

@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InventoryService } from './services/inventory.service';
+import { InventoryService, PaginationResponse } from './services/inventory.service';
 import { ProductAttributes } from './models/product.model';
 
 @Component({
@@ -20,6 +20,12 @@ export class InventoryComponent implements OnInit {
   isModalOpen = false;
   productForm: FormGroup;
   editingProductId: number | null = null;
+  currentPage = 1;
+  totalPages = 1;
+  totalItems = 0;
+  itemsPerPage = 0;
+  hasNextPage = false;
+  hasPreviousPage = false;
 
   constructor() {
     this.productForm = this.fb.group({
@@ -35,15 +41,73 @@ export class InventoryComponent implements OnInit {
     this.loadProducts();
   }
 
-  private loadProducts(): void {
-    this.inventoryService.getProducts().subscribe({
-      next: (data) => {
-        this.products = data;
+  private loadProducts(page: number = 1): void {
+    this.inventoryService.getProducts(page, 20).subscribe({
+      next: (response: PaginationResponse) => {
+        this.products = response.products;
+        this.currentPage = response.pagination.currentPage;
+        this.totalPages = response.pagination.totalPages;
+        this.totalItems = response.pagination.total;
+        this.itemsPerPage = response.pagination.limit;
+        this.hasNextPage = response.pagination.hasNextPage;
+        this.hasPreviousPage = response.pagination.hasPreviousPage;
       },
       error: (error) => {
         console.error('Error al cargar productos:', error);
       }
     });
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.loadProducts(page);
+    }
+  }
+
+  getPages(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 7;
+    const halfVisible = Math.floor(maxVisiblePages / 2);
+
+    // Si hay menos páginas que el máximo visible, mostramos todas
+    if (this.totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+      return pages;
+    }
+
+    // Calcular el rango de páginas a mostrar
+    let startPage = Math.max(1, this.currentPage - halfVisible);
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    // Ajustar el rango si estamos cerca del final
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    // Agregar la primera página
+    if (startPage > 1) {
+      pages.push(1);
+      if (startPage > 2) {
+        pages.push(-1); // -1 representa los puntos suspensivos
+      }
+    }
+
+    // Agregar las páginas del rango
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    // Agregar la última página si es necesario
+    if (endPage < this.totalPages) {
+      if (endPage < this.totalPages - 1) {
+        pages.push(-1); // -1 representa los puntos suspensivos
+      }
+      pages.push(this.totalPages);
+    }
+
+    return pages;
   }
 
   openModal(product?: ProductAttributes): void {
