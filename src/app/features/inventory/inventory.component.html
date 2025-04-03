@@ -21,8 +21,8 @@
         <tr *ngFor="let product of products">
           <td>{{ product.name }}</td>
           <td>{{ product.description }}</td>
-          <td>{{ product.total_quantity }}</td>
           <td>{{ product.price | currency }}</td>
+          <td>{{ product.total_quantity }}</td>
           <td>{{ product.available_quantity }}</td>
           <td>
             <button class="edit-button" (click)="openModal(product)">

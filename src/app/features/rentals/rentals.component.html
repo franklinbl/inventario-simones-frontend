@@ -10,6 +10,7 @@
       <thead>
         <tr>
           <th>Cliente</th>
+          <th>Teléfono</th>
           <th>Fecha de Renta</th>
           <th>Fecha de Devolución</th>
           <th>Precio Total</th>
@@ -20,7 +21,8 @@
         <ng-container *ngFor="let rental of rentals">
           <tr (click)="toggleDetails(rental)">
           <td>{{ rental.client_name }}</td>
-          <td>{{ rental.start_date | date }}</td>
+          <td>{{ rental.client_phone }}</td>
+          <td>{{ rental.start_date | date:'dd/MM/yyyy' }}</td>
           <td>{{ rental.end_date | date:'dd/MM/yyyy' }}</td>
           <td>$ {{ calculateTotalPrice(rental) | number:'1.2-2' }}</td>
           <td>
@@ -30,7 +32,7 @@
           </td>
           </tr>
           <tr class="details-row" *ngIf="rental.expanded">
-            <td colspan="5">
+            <td colspan="6">
               <div class="details-content">
                 <div class="container-products-list">
                   <h3>Productos Rentados</h3>
@@ -41,8 +43,8 @@
                     <button class="secondary-button" (click)="downloadInvoice(rental)">
                       Ver nota de entrega
                     </button>
-                    <button class="primary-button" (click)="rentalCompleted(rental.id)" *ngIf="rental.status !== 'completed'">
-                      Productos entregados
+                    <button class="secondary-button" (click)="rentalCompleted(rental.id)" *ngIf="rental.status !== 'completed'">
+                      Renta completada
                     </button>
                   </div>
                 </div>
@@ -84,32 +86,34 @@
     </div>
     <div class="modal-body">
       <form [formGroup]="rentalForm" class="rental-form">
-        <div class="form-group">
-          <label for="client_name">Nombre del Cliente</label>
-          <input
-            type="text"
-            id="client_name"
-            formControlName="client_name"
-            class="form-control"
-            placeholder="Daniel Valera"
-            [class.is-invalid]="rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched"
-          >
-          <div class="error-message" *ngIf="rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched">
-            {{ getErrorMessage('client_name') }}
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client_name">Nombre del Cliente</label>
+            <input
+              type="text"
+              id="client_name"
+              formControlName="client_name"
+              class="form-control"
+              placeholder="Daniel Valera"
+              [class.is-invalid]="rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched"
+            >
+            <div class="error-message" *ngIf="rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched">
+              {{ getErrorMessage('client_name') }}
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="client_phone">Teléfono del Cliente</label>
-          <input
-            type="tel"
-            id="client_phone"
-            formControlName="client_phone"
-            class="form-control"
-            [class.is-invalid]="rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched"
-          >
-          <div class="error-message" *ngIf="rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched">
-            {{ getErrorMessage('client_phone') }}
+          <div class="form-group">
+            <label for="client_phone">Teléfono del Cliente</label>
+            <input
+              type="tel"
+              id="client_phone"
+              formControlName="client_phone"
+              class="form-control"
+              [class.is-invalid]="rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched"
+            >
+            <div class="error-message" *ngIf="rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched">
+              {{ getErrorMessage('client_phone') }}
+            </div>
           </div>
         </div>
 
@@ -143,7 +147,7 @@
           </div>
         </div>
 
-        <!-- <div class="form-group">
+        <div class="form-group">
           <label for="notes">Notas</label>
           <textarea
             id="notes"
@@ -151,7 +155,7 @@
             class="form-control"
             rows="3"
           ></textarea>
-        </div> -->
+        </div>
 
         <div class="form-group">
           <label>Productos</label>

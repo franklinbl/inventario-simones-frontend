@@ -129,10 +129,17 @@ export class RentalsComponent implements OnInit {
     if (rental) {
       this.isEditing = true;
       this.currentRentalId = rental.id;
+
+      // Formatear las fechas al formato YYYY-MM-DD
+      const startDate = new Date(rental.start_date);
+      const endDate = new Date(rental.end_date);
+
       this.rentalForm.patchValue({
         client_name: rental.client_name,
-        start_date: rental.start_date,
-        end_date: rental.end_date,
+        client_phone: rental.client_phone,
+        start_date: startDate.toISOString().split('T')[0],
+        end_date: endDate.toISOString().split('T')[0],
+        notes: rental.notes,
         status: rental.status
       });
 
@@ -229,7 +236,7 @@ export class RentalsComponent implements OnInit {
           next: (response) => {
             const index = this.rentals.findIndex(r => r.id === this.currentRentalId);
             if (index !== -1) {
-              this.rentals[index] = response;
+              this.rentals[index] = response.rental;
             }
             this.closeModal();
           },
@@ -240,7 +247,7 @@ export class RentalsComponent implements OnInit {
       } else {
         this.rentalService.createRental(rentalData).subscribe({
           next: (response) => {
-            this.rentals.push(response);
+            this.rentals.push(response.rental);
             this.closeModal();
           },
           error: (error) => {
@@ -322,8 +329,11 @@ export class RentalsComponent implements OnInit {
 
   rentalCompleted(rentalId: number) {
     this.rentalService.completedRental(rentalId).subscribe({
-      next: (response) => {
-        console.log(response);
+      next: () => {
+        const index = this.rentals.findIndex(r => r.id === rentalId);
+        if (index !== -1) {
+          this.rentals[index].status = 'completed';
+        }
       },
       error: (error) => {
         console.error('Error al cerrar una renta:', error);

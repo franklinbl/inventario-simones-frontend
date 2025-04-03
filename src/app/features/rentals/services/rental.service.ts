@@ -15,12 +15,12 @@ export class RentalService {
     return this.http.get<RentalAttributes[]>(this.apiUrl);
   }
 
-  createRental(rental: Omit<RentalAttributes, 'id'>): Observable<RentalAttributes> {
-    return this.http.post<RentalAttributes>(this.apiUrl, rental);
+  createRental(rental: Omit<RentalAttributes, 'id'>): Observable<{message: string, rental: RentalAttributes}> {
+    return this.http.post<{message: string,rental: RentalAttributes}>(this.apiUrl, rental);
   }
 
-  updateRental(id: number, rentalData: Partial<RentalAttributes>): Observable<RentalAttributes> {
-    return this.http.put<RentalAttributes>(`${this.apiUrl}/${id}`, rentalData);
+  updateRental(id: number, rentalData: Partial<RentalAttributes>): Observable<{message: string, rental: RentalAttributes}> {
+    return this.http.put<{message: string, rental: RentalAttributes}>(`${this.apiUrl}/${id}`, rentalData);
   }
 
   completedRental(id: number): Observable<RentalAttributes> {

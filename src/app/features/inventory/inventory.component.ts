@@ -24,7 +24,7 @@ export class InventoryComponent implements OnInit {
   constructor() {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required]],
+      description: [''],
       total_quantity: [null, [Validators.required, Validators.min(0)]],
       available_quantity: [null, [Validators.required, Validators.min(0)]],
       price: [null, [Validators.required, Validators.min(0)]]
@@ -53,7 +53,8 @@ export class InventoryComponent implements OnInit {
         name: product.name,
         description: product.description,
         total_quantity: product.total_quantity,
-        available_quantity: product.available_quantity
+        available_quantity: product.available_quantity,
+        price: product.price
       });
     } else {
       this.editingProductId = null;
@@ -90,7 +91,7 @@ export class InventoryComponent implements OnInit {
         // Crear nuevo producto
         this.inventoryService.createProduct(productData).subscribe({
           next: (response) => {
-            this.products.push(response);
+            this.products.push(response.product);
             this.closeModal();
           },
           error: (error) => {

@@ -15,8 +15,8 @@ export class InventoryService {
     return this.http.get<ProductAttributes[]>(this.apiUrl);
   }
 
-  createProduct(product: Omit<ProductAttributes, 'id'>): Observable<ProductAttributes> {
-    return this.http.post<ProductAttributes>(this.apiUrl, product);
+  createProduct(product: Omit<ProductAttributes, 'id'>): Observable<{message: string, product: ProductAttributes}> {
+    return this.http.post<{message: string, product: ProductAttributes}>(this.apiUrl, product);
   }
 
   updateProduct(id: number, product: Omit<ProductAttributes, 'id'>): Observable<ProductAttributes> {
