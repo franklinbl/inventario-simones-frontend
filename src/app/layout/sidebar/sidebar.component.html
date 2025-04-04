@@ -30,6 +30,9 @@
   </nav>
 
   <div class="sidebar-footer">
+    <div>
+      <p style="text-align: center;">👋🏼 Hola, {{ user?.name }}</p>
+    </div>
     <button class="nav-item logout-btn" (click)="logout()">
       <span class="icon">🚪</span>
       <span *ngIf="!isCollapsed">Cerrar Sesión</span>

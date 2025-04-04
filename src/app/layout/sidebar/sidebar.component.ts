@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -10,10 +10,17 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   isCollapsed = false;
+  user= {
+    name: ''
+  };
 
   constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.user= this.authService.getCurrentUser()
+  }
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
