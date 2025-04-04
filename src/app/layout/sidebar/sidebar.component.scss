@@ -37,6 +37,7 @@
 
 .sidebar-nav {
   padding: $spacing-md 0;
+  flex: 1;
 }
 
 .nav-item {
@@ -46,6 +47,11 @@
   color: white;
   text-decoration: none;
   transition: $transition-base;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -59,4 +65,10 @@
 .icon {
   margin-right: $spacing-md;
   font-size: 1.2rem;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: $spacing-md 0;
 }

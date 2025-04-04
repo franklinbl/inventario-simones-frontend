@@ -23,5 +23,16 @@
       <span class="icon">📈</span>
       <span *ngIf="!isCollapsed">Reportes</span>
     </a>
+    <a routerLink="/users" routerLinkActive="active" class="nav-item">
+      <span class="icon">👨🏽‍🔧</span>
+      <span *ngIf="!isCollapsed">Usuarios</span>
+    </a>
   </nav>
+
+  <div class="sidebar-footer">
+    <button class="nav-item logout-btn" (click)="logout()">
+      <span class="icon">🚪</span>
+      <span *ngIf="!isCollapsed">Cerrar Sesión</span>
+    </button>
+  </div>
 </aside>
