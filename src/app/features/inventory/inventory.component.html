@@ -1,9 +1,11 @@
 <div class="container">
   <div class="header">
     <h2>Inventario de Productos</h2>
-    <button class="primary-button" (click)="openModal()">
-      Nuevo Producto
-    </button>
+    @if (isAdmin) {
+      <button class="primary-button" (click)="openModal()">
+        Nuevo Producto
+      </button>
+    }
   </div>
   <div class="table-responsive">
     <table class="table">
@@ -14,27 +16,34 @@
           <th>Precio</th>
           <th>Cantidad Total</th>
           <th>Cantidad Disponible</th>
-          <th></th>
+          @if (isAdmin) {
+            <th></th>
+          }
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let product of products">
+        @for (product of products; track $index) {
+        <tr>
           <td>{{ product.name }}</td>
           <td>{{ product.description }}</td>
           <td>{{ product.price | currency }}</td>
           <td>{{ product.total_quantity }}</td>
           <td>{{ product.available_quantity }}</td>
+          @if (isAdmin) {
           <td>
-            <button class="edit-button" (click)="openModal(product)">
-              Editar
-            </button>
-          </td>
+              <button class="edit-button" (click)="openModal(product)">
+                Editar
+              </button>
+            </td>
+          }
         </tr>
+        }
       </tbody>
     </table>
 
     <!-- Pagination Controls -->
-    <div class="pagination" *ngIf="totalPages > 1">
+    @if (totalPages > 1) {
+    <div class="pagination">
       <button
         class="pagination-button"
         [disabled]="!hasPreviousPage"
@@ -44,8 +53,8 @@
       </button>
 
       <div class="page-numbers">
+        @for (page of getPages(); track $index) {
         <button
-          *ngFor="let page of getPages()"
           class="page-number"
           [class.active]="page === currentPage"
           [class.ellipsis]="page === -1"
@@ -54,6 +63,7 @@
         >
           {{ page === -1 ? '...' : page }}
         </button>
+        }
       </div>
 
       <button
@@ -64,11 +74,13 @@
         Siguiente
       </button>
     </div>
+    }
   </div>
 </div>
 
 <!-- Modal -->
-<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+ @if (isModalOpen) {
+<div class="modal-overlay" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h3>{{ modalTitle }}</h3>
@@ -85,9 +97,11 @@
             class="form-control"
             [class.is-invalid]="productForm.get('name')?.invalid && productForm.get('name')?.touched"
           >
-          <div class="error-message" *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">
-            {{ getErrorMessage('name') }}
-          </div>
+          @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
+            <div class="error-message">
+              {{ getErrorMessage('name') }}
+            </div>
+          }
         </div>
 
         <div class="form-group">
@@ -98,9 +112,11 @@
             class="form-control"
             [class.is-invalid]="productForm.get('description')?.invalid && productForm.get('description')?.touched"
           ></textarea>
-          <div class="error-message" *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched">
-            {{ getErrorMessage('description') }}
-          </div>
+          @if (productForm.get('description')?.invalid && productForm.get('description')?.touched) {
+            <div class="error-message">
+              {{ getErrorMessage('description') }}
+            </div>
+          }
         </div>
 
         <div class="form-group">
@@ -113,9 +129,11 @@
             placeholder="0"
             [class.is-invalid]="productForm.get('price')?.invalid && productForm.get('price')?.touched"
           >
-          <div class="error-message" *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched">
-            {{ getErrorMessage('price') }}
-          </div>
+          @if (productForm.get('price')?.invalid && productForm.get('price')?.touched) {
+            <div class="error-message">
+              {{ getErrorMessage('price') }}
+            </div>
+          }
         </div>
 
         <div class="form-group">
@@ -128,9 +146,11 @@
             placeholder="0"
             [class.is-invalid]="productForm.get('total_quantity')?.invalid && productForm.get('total_quantity')?.touched"
           >
-          <div class="error-message" *ngIf="productForm.get('total_quantity')?.invalid && productForm.get('total_quantity')?.touched">
-            {{ getErrorMessage('total_quantity') }}
-          </div>
+          @if (productForm.get('total_quantity')?.invalid && productForm.get('total_quantity')?.touched) {
+            <div class="error-message">
+              {{ getErrorMessage('total_quantity') }}
+            </div>
+          }
         </div>
 
         <div class="form-group">
@@ -143,9 +163,11 @@
             placeholder="0"
             [class.is-invalid]="productForm.get('available_quantity')?.invalid && productForm.get('available_quantity')?.touched"
           >
-          <div class="error-message" *ngIf="productForm.get('available_quantity')?.invalid && productForm.get('available_quantity')?.touched">
-            {{ getErrorMessage('available_quantity') }}
-          </div>
+          @if (productForm.get('available_quantity')?.invalid && productForm.get('available_quantity')?.touched) {
+            <div class="error-message">
+              {{ getErrorMessage('available_quantity') }}
+            </div>
+          }
         </div>
 
         <div class="form-actions">
@@ -158,3 +180,4 @@
     </div>
   </div>
 </div>
+ }

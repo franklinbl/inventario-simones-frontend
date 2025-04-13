@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InventoryService, PaginationResponse } from './services/inventory.service';
 import { ProductAttributes } from './models/product.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-inventory',
@@ -15,7 +16,8 @@ import { ProductAttributes } from './models/product.model';
 export class InventoryComponent implements OnInit {
   private inventoryService = inject(InventoryService);
   private fb = inject(FormBuilder);
-
+  private authService = inject(AuthService);
+  isAdmin = false;
   products: ProductAttributes[] = [];
   isModalOpen = false;
   productForm: FormGroup;
@@ -39,6 +41,8 @@ export class InventoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+    const user = this.authService.getCurrentUser();
+    this.isAdmin = user?.role === 'Administrador';
   }
 
   private loadProducts(page: number = 1): void {
