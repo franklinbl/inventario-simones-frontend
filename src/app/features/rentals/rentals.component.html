@@ -1,9 +1,11 @@
 <div class="container">
   <div class="header">
     <h2>Rentas</h2>
-    <button class="primary-button" (click)="openModal()">
-      Nueva Renta
-    </button>
+    @if (isAdmin) {
+      <button class="primary-button" (click)="openModal()">
+        Nueva Renta
+      </button>
+    }
   </div>
   <div class="table-responsive">
     <table class="table">
@@ -18,199 +20,227 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let rental of rentals">
-          <tr (click)="toggleDetails(rental)">
-          <td>{{ rental.client_name }}</td>
-          <td>{{ rental.client_phone }}</td>
-          <td>{{ rental.start_date | date:'dd/MM/yyyy' }}</td>
-          <td>{{ rental.end_date | date:'dd/MM/yyyy' }}</td>
-          <td>$ {{ calculateTotalPrice(rental) | number:'1.2-2' }}</td>
-          <td>
-            <span class="status-badge" [ngClass]="getStatusClass(rental.status)">
-              {{ getStatusText(rental.status) }}
-            </span>
-          </td>
-          </tr>
-          <tr class="details-row" *ngIf="rental.expanded">
-            <td colspan="6">
-              <div class="details-content">
-                <div class="container-products-list">
-                  <h3>Productos Rentados</h3>
-                  <div class="button-group">
-                    <button class="secondary-button" (click)="openModal(rental)" *ngIf="rental.status !== 'completed'">
-                      Editar
-                    </button>
-                    <button class="secondary-button" (click)="downloadInvoice(rental)">
-                      Ver nota de entrega
-                    </button>
-                    <button class="secondary-button" (click)="rentalCompleted(rental.id)" *ngIf="rental.status !== 'completed'">
-                      Renta completada
-                    </button>
-                  </div>
-                </div>
-                <table class="details-table">
-                  <thead>
-                    <tr>
-                      <th>Producto</th>
-                      <th>Descripción</th>
-                      <th>Cantidad</th>
-                      <th>Precio</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let product of rental.products">
-                      <td>{{ product.name }}</td>
-                      <td>{{ product.description }}</td>
-                      <td>{{ product.RentalProduct?.quantity }}</td>
-                      <td>{{ product.price | currency}}</td>
-                      <td>{{ ((product.price || 0) * (product.RentalProduct?.quantity || 0)) | currency}}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+        @for (rental of rentals; track $index) {
+          <ng-container>
+            <tr (click)="toggleDetails(rental)">
+            <td>{{ rental.client_name }}</td>
+            <td>{{ rental.client_phone }}</td>
+            <td>{{ rental.start_date | date:'dd/MM/yyyy' }}</td>
+            <td>{{ rental.end_date | date:'dd/MM/yyyy' }}</td>
+            <td>$ {{ calculateTotalPrice(rental) | number:'1.2-2' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(rental.status)">
+                {{ getStatusText(rental.status) }}
+              </span>
             </td>
-          </tr>
-        </ng-container>
+            </tr>
+            @if (rental.expanded) {
+              <tr class="details-row">
+                <td colspan="6">
+                  <div class="details-content">
+                    <div class="container-products-list">
+                      <h3>Productos Rentados</h3>
+                      <div class="button-group">
+                        @if (rental.status !== 'completed' && isAdmin) {
+                          <button class="secondary-button" (click)="openModal(rental)">
+                            Editar
+                          </button>
+                        }
+                        <button class="secondary-button" (click)="downloadInvoice(rental)">
+                          Ver nota de entrega
+                        </button>
+                        @if (rental.status !== 'completed' && isAdmin) {
+                          <button class="secondary-button" (click)="rentalCompleted(rental.id)">
+                            Renta completada
+                          </button>
+                        }
+                      </div>
+                    </div>
+                    <table class="details-table">
+                      <thead>
+                        <tr>
+                          <th>Producto</th>
+                          <th>Descripción</th>
+                          <th>Cantidad</th>
+                          <th>Precio</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (item of rental.products; track $index) {
+                          <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.description }}</td>
+                            <td>{{ item.RentalProduct?.quantity }}</td>
+                            <td>{{ item.price | currency}}</td>
+                            <td>{{ ((item.price || 0) * (item.RentalProduct?.quantity || 0)) | currency}}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            }
+          </ng-container>
+        }
       </tbody>
     </table>
   </div>
 </div>
 
 <!-- Modal -->
-<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>{{ isEditing ? 'Editar Renta' : 'Nueva Renta' }}</h3>
-      <button class="close-button" (click)="closeModal()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <form [formGroup]="rentalForm" class="rental-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="client_name">Nombre del Cliente</label>
-            <input
-              type="text"
-              id="client_name"
-              formControlName="client_name"
-              class="form-control"
-              placeholder="Daniel Valera"
-              [class.is-invalid]="rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched"
-            >
-            <div class="error-message" *ngIf="rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched">
-              {{ getErrorMessage('client_name') }}
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="client_phone">Teléfono del Cliente</label>
-            <input
-              type="tel"
-              id="client_phone"
-              formControlName="client_phone"
-              class="form-control"
-              [class.is-invalid]="rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched"
-            >
-            <div class="error-message" *ngIf="rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched">
-              {{ getErrorMessage('client_phone') }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="start_date">Fecha de Renta</label>
-            <input
-              type="date"
-              id="start_date"
-              formControlName="start_date"
-              class="form-control"
-              [class.is-invalid]="rentalForm.get('start_date')?.invalid && rentalForm.get('start_date')?.touched"
-            >
-            <div class="error-message" *ngIf="rentalForm.get('start_date')?.invalid && rentalForm.get('start_date')?.touched">
-              {{ getErrorMessage('start_date') }}
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="end_date">Fecha de Devolución</label>
-            <input
-              type="date"
-              id="end_date"
-              formControlName="end_date"
-              class="form-control"
-              [class.is-invalid]="rentalForm.get('end_date')?.invalid && rentalForm.get('end_date')?.touched"
-            >
-            <div class="error-message" *ngIf="rentalForm.get('end_date')?.invalid && rentalForm.get('end_date')?.touched">
-              {{ getErrorMessage('end_date') }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="notes">Notas</label>
-          <textarea
-            id="notes"
-            formControlName="notes"
-            class="form-control"
-            rows="3"
-          ></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>Productos</label>
-          <mat-form-field class="product-select">
-            <mat-select [formControl]="selectedProductCtrl" placeholder="Sillas">
-              <mat-option>
-                <ngx-mat-select-search
-                  [formControl]="productFilterCtrl"
-                  placeholderLabel="Buscar producto..."
-                  noEntriesFoundLabel="No se encontraron productos"
-                ></ngx-mat-select-search>
-              </mat-option>
-              <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
-                {{product.name}} - Stock: {{product.available_quantity}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <div class="selected-products-list" *ngIf="selectedProducts.length > 0">
-            <div class="selected-product" *ngFor="let item of selectedProducts; let i = index">
-              <div class="product-info">
-                <span class="product-name">{{item.product.name}}</span>
-                <span class="product-stock">Stock disponible: {{item.product.available_quantity}}</span>
-              </div>
-              <div class="product-quantity">
-                <div class="form-group">
-                  <label for="quantity"><small>Cantidad</small></label>
-                  <input
-                    type="number"
-                    id="quantity"
-                    [min]="1"
-                    [max]="item.product.available_quantity"
-                    [formControl]="$any(productsFormArray.at(i).get('quantity'))"
-                    class="form-control"
-                    placeholder="10"
-                  >
-                  <div class="error-message" *ngIf="productsFormArray.at(i).get('quantity')?.invalid && productsFormArray.at(i).get('quantity')?.touched">
-                    {{ getQuantityErrorMessage(i) }}
-                  </div>
+ @if (isModalOpen) {
+   <div class="modal-overlay" (click)="closeModal()">
+     <div class="modal-content" (click)="$event.stopPropagation()">
+       <div class="modal-header">
+         <h3>{{ isEditing ? 'Editar Renta' : 'Nueva Renta' }}</h3>
+         <button class="close-button" (click)="closeModal()">&times;</button>
+       </div>
+       <div class="modal-body">
+         <form [formGroup]="rentalForm" class="rental-form">
+           <div class="form-row">
+             <div class="form-group">
+               <label for="client_name">Nombre del Cliente</label>
+               <input
+                 type="text"
+                 id="client_name"
+                 formControlName="client_name"
+                 class="form-control"
+                 placeholder="Daniel Valera"
+                 [class.is-invalid]="rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched"
+               >
+               @if (rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('client_name') }}
                 </div>
-                <button mat-icon-button color="warn" (click)="removeProduct(item.product.id)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+               }
+             </div>
 
-        <div class="form-actions">
-          <button class="secondary-button" (click)="closeModal()">Cancelar</button>
-          <button class="primary-button" (click)="onSubmit()" [disabled]="selectedProducts.length === 0">
-            {{ isEditing ? 'Actualizar' : 'Guardar' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+             <div class="form-group">
+               <label for="client_phone">Teléfono del Cliente</label>
+               <input
+                 type="tel"
+                 id="client_phone"
+                 formControlName="client_phone"
+                 class="form-control"
+                 [class.is-invalid]="rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched"
+               >
+               @if (rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('client_phone') }}
+                </div>
+               }
+             </div>
+           </div>
+
+           <div class="form-row">
+             <div class="form-group">
+               <label for="start_date">Fecha de Renta</label>
+               <input
+                 type="date"
+                 id="start_date"
+                 formControlName="start_date"
+                 class="form-control"
+                 [class.is-invalid]="rentalForm.get('start_date')?.invalid && rentalForm.get('start_date')?.touched"
+               >
+               @if (rentalForm.get('start_date')?.invalid && rentalForm.get('start_date')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('start_date') }}
+                </div>
+               }
+             </div>
+
+             <div class="form-group">
+               <label for="end_date">Fecha de Devolución</label>
+               <input
+                 type="date"
+                 id="end_date"
+                 formControlName="end_date"
+                 class="form-control"
+                 [class.is-invalid]="rentalForm.get('end_date')?.invalid && rentalForm.get('end_date')?.touched"
+               >
+               @if (rentalForm.get('end_date')?.invalid && rentalForm.get('end_date')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('end_date') }}
+                </div>
+               }
+             </div>
+           </div>
+
+           <div class="form-group">
+             <label for="notes">Notas</label>
+             <textarea
+               id="notes"
+               formControlName="notes"
+               class="form-control"
+               rows="3"
+             ></textarea>
+           </div>
+
+           <div class="form-group">
+             <label>Productos</label>
+             <mat-form-field class="product-select">
+               <mat-select [formControl]="selectedProductCtrl" placeholder="Sillas">
+                 <mat-option>
+                   <ngx-mat-select-search
+                     [formControl]="productFilterCtrl"
+                     placeholderLabel="Buscar producto..."
+                     noEntriesFoundLabel="No se encontraron productos"
+                   ></ngx-mat-select-search>
+                 </mat-option>
+                 @for (product of filteredProducts | async; track $index) {
+                  <mat-option [value]="product">
+                    {{product.name}} - Stock: {{product.available_quantity}}
+                  </mat-option>
+                 }
+               </mat-select>
+             </mat-form-field>
+
+             @if (selectedProducts.length > 0) {
+               <div class="selected-products-list">
+                @for (item of selectedProducts; track $index) {
+                 <div class="selected-product">
+                   <div class="product-info">
+                     <span class="product-name">{{item.product.name}}</span>
+                     <span class="product-stock">Stock disponible: {{item.product.available_quantity}}</span>
+                   </div>
+                   <div class="product-quantity">
+                     <div class="form-group">
+                       <label for="quantity"><small>Cantidad</small></label>
+                       <input
+                         type="number"
+                         id="quantity"
+                         [min]="1"
+                         [max]="item.product.available_quantity"
+                         [formControl]="$any(productsFormArray.at($index).get('quantity'))"
+                         class="form-control"
+                         placeholder="10"
+                       >
+                       @if (productsFormArray.at($index).get('quantity')?.invalid && productsFormArray.at($index).get('quantity')?.touched) {
+                        <div class="error-message">
+                          {{ getQuantityErrorMessage($index) }}
+                        </div>
+                       }
+                     </div>
+                     <button mat-icon-button color="warn" (click)="removeProduct(item.product.id)">
+                       <mat-icon>delete</mat-icon>
+                     </button>
+                   </div>
+                 </div>
+                }
+               </div>
+             }
+           </div>
+
+           <div class="form-actions">
+             <button class="secondary-button" (click)="closeModal()">Cancelar</button>
+             <button class="primary-button" (click)="onSubmit()" [disabled]="selectedProducts.length === 0">
+               {{ isEditing ? 'Actualizar' : 'Guardar' }}
+             </button>
+           </div>
+         </form>
+       </div>
+     </div>
+   </div>
+ }

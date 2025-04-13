@@ -13,6 +13,7 @@ import { RentalAttributes } from './models/rental.model';
 import { InventoryService } from '../inventory/services/inventory.service';
 import { ProductAttributes } from '../inventory/models/product.model';
 import { Observable, map, startWith } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-rentals',
@@ -35,6 +36,7 @@ import { Observable, map, startWith } from 'rxjs';
 export class RentalsComponent implements OnInit {
   private rentalService = inject(RentalService);
   private inventoryService = inject(InventoryService);
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
 
   rentals: (RentalAttributes & { expanded?: boolean })[] = [];
@@ -47,6 +49,7 @@ export class RentalsComponent implements OnInit {
   productFilterCtrl = this.fb.control('');
   selectedProductCtrl = this.fb.control<ProductAttributes | null>(null);
   selectedProducts: { product: ProductAttributes; index: number }[] = [];
+  isAdmin = false;
 
   constructor() {
     this.rentalForm = this.fb.group({
@@ -86,6 +89,8 @@ export class RentalsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const user = this.authService.getCurrentUser();
+    this.isAdmin = user?.role.name === 'Administrador';
     this.loadRentals();
     this.loadProducts();
   }

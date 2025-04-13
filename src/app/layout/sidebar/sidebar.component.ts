@@ -12,9 +12,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class SidebarComponent implements OnInit {
   isCollapsed = false;
-  user= {
-    name: ''
-  };
+  user: { name: string } | null = null;
 
   constructor(private authService: AuthService) {}
 
