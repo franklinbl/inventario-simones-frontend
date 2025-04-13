@@ -42,7 +42,7 @@ export class InventoryComponent implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
     const user = this.authService.getCurrentUser();
-    this.isAdmin = user?.role === 'Administrador';
+    this.isAdmin = user?.role.name === 'Administrador';
   }
 
   private loadProducts(page: number = 1): void {
