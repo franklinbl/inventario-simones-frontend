@@ -371,7 +371,6 @@ export class RentalsComponent implements OnInit {
         let fileName = 'archivo.pdf'; // Valor por defecto
         if (contentDisposition && contentDisposition.includes('filename=')) {
           fileName = contentDisposition.split('filename=')[1].split(';')[0].replace(/"/g, '');
-          console.log(fileName);
         }
 
         // Crear un objeto URL temporal para el Blob

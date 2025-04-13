@@ -1,6 +1,8 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-header">
-    <h2 *ngIf="!isCollapsed">Simones</h2>
+    @if (!isCollapsed) {
+      <h2>Simones</h2>
+    }
     <button class="toggle-btn" (click)="toggleSidebar()">
       {{ isCollapsed ? '→' : '←' }}
     </button>
@@ -12,7 +14,9 @@
         @if (item.permissions.includes(user.role.name)) {
           <a routerLink="{{ item.route }}" routerLinkActive="active" class="nav-item">
             <span class="icon">{{ item.icon }}</span>
-            <span *ngIf="!isCollapsed">{{ item.name }}</span>
+            @if (!isCollapsed) {
+              <span>{{ item.name }}</span>
+            }
           </a>
         }
       }
@@ -25,7 +29,9 @@
     </div>
     <button class="nav-item logout-btn" (click)="logout()">
       <span class="icon">🚪</span>
-      <span *ngIf="!isCollapsed">Cerrar Sesión</span>
+      @if (!isCollapsed) {
+        <span>Cerrar Sesión</span>
+      }
     </button>
   </div>
 </aside>

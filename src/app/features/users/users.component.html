@@ -52,9 +52,10 @@
 </div>
 
 <!-- Modal -->
-<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
+@if (isModalOpen) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
       <h3>{{ modalTitle }}</h3>
       <button class="close-button" (click)="closeModal()">&times;</button>
     </div>
@@ -69,9 +70,11 @@
             class="form-control"
             [class.is-invalid]="userForm.get('name')?.invalid && userForm.get('name')?.touched"
           >
-          <div class="error-message" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
-            {{ getErrorMessage('name') }}
-          </div>
+          @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
+            <div class="error-message">
+              {{ getErrorMessage('name') }}
+            </div>
+            }
         </div>
 
         <div class="form-group">
@@ -83,9 +86,11 @@
             class="form-control"
             [class.is-invalid]="userForm.get('username')?.invalid && userForm.get('username')?.touched"
           >
-          <div class="error-message" *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched">
-            {{ getErrorMessage('username') }}
-          </div>
+          @if (userForm.get('username')?.invalid && userForm.get('username')?.touched) {
+            <div class="error-message">
+              {{ getErrorMessage('username') }}
+            </div>
+          }
         </div>
 
         <div class="form-group">
@@ -97,9 +102,11 @@
             class="form-control"
             [class.is-invalid]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
           >
-          <div class="error-message" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
-            {{ getErrorMessage('password') }}
-          </div>
+          @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
+            <div class="error-message">
+              {{ getErrorMessage('password') }}
+            </div>
+          }
         </div>
 
         <div class="form-group">
@@ -113,9 +120,11 @@
             <option [ngValue]="1">Administrador</option>
             <option [ngValue]="2">Empleado</option>
           </select>
-          <div class="error-message" *ngIf="userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched">
-            {{ getErrorMessage('roleId') }}
-          </div>
+          @if (userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched) {
+            <div class="error-message">
+              {{ getErrorMessage('roleId') }}
+            </div>
+          }
         </div>
 
         <div class="form-actions">
@@ -128,3 +137,4 @@
     </div>
   </div>
 </div>
+}
