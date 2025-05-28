@@ -252,7 +252,7 @@ export class RentalsComponent implements OnInit {
       } else {
         this.rentalService.createRental(rentalData).subscribe({
           next: (response) => {
-            this.rentals.push(response.rental);
+            this.rentals.unshift(response.rental);
             this.closeModal();
           },
           error: (error) => {
