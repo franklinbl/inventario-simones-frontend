@@ -268,6 +268,13 @@ h3 {
   &.is-invalid {
     border-color: #dc3545;
   }
+
+  &:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    border-color: #ddd;
+  }
 }
 
 textarea.form-control {
@@ -279,6 +286,100 @@ textarea.form-control {
   color: #dc3545;
   font-size: 12px;
   margin-top: 4px;
+}
+
+.delivery-select {
+  width: 100%;
+
+  ::ng-deep {
+    .mdc-text-field, .mat-mdc-form-field-infix {
+      padding: 0;
+    }
+
+    .mat-mdc-form-field-infix {
+      min-height: auto;
+    }
+
+    .mat-mdc-form-field-flex {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 0 8px;
+    }
+
+    .mat-mdc-select-trigger {
+      min-height: 38px;
+      padding: 0;
+    }
+
+    .mat-mdc-select-arrow {
+      color: #666;
+    }
+
+    .mat-mdc-select-panel {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .mat-mdc-option {
+      min-height: 36px;
+
+      &:hover {
+        background-color: #f5f5f5;
+      }
+
+      &.mdc-list-item--selected {
+        background-color: #e3f2fd;
+      }
+    }
+  }
+}
+
+.selected-products-list {
+  margin-top: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  background-color: #f9f9f9;
+
+  .selected-product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .product-name {
+        font-weight: 500;
+        color: #333;
+      }
+
+      .product-stock {
+        font-size: 0.875rem;
+        color: #666;
+      }
+    }
+
+    .product-quantity {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 40%;
+
+      .form-group {
+        width: 100%;
+      }
+    }
+  }
 }
 
 .form-actions {
@@ -342,52 +443,6 @@ textarea.form-control {
       &:focus {
         outline: none;
         border-bottom-color: #1976d2;
-      }
-    }
-  }
-}
-
-.selected-products-list {
-  margin-top: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 1rem;
-  background-color: #f9f9f9;
-
-  .selected-product {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    .product-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-
-      .product-name {
-        font-weight: 500;
-        color: #333;
-      }
-
-      .product-stock {
-        font-size: 0.875rem;
-        color: #666;
-      }
-    }
-
-    .product-quantity {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      width: 40%;
-
-      .form-group {
-        width: 100%;
       }
     }
   }

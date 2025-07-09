@@ -58,7 +58,20 @@ export class RentalsComponent implements OnInit {
       start_date: ['', [Validators.required]],
       end_date: ['', [Validators.required]],
       notes: [''],
+      is_delivery_by_us: [false, [Validators.required]],
+      delivery_price: [{value: null, disabled: true}, [Validators.min(0)]],
       products: this.fb.array([])
+    });
+
+    // Suscribirse a cambios en is_delivery_by_us para habilitar/deshabilitar delivery_price
+    this.rentalForm.get('is_delivery_by_us')?.valueChanges.subscribe(isDeliveryByUs => {
+      const deliveryPriceControl = this.rentalForm.get('delivery_price');
+      if (isDeliveryByUs) {
+        deliveryPriceControl?.enable();
+      } else {
+        deliveryPriceControl?.disable();
+        deliveryPriceControl?.setValue(null);
+      }
     });
 
     this.filteredProducts = this.productFilterCtrl.valueChanges.pipe(
@@ -145,8 +158,18 @@ export class RentalsComponent implements OnInit {
         start_date: startDate.toISOString().split('T')[0],
         end_date: endDate.toISOString().split('T')[0],
         notes: rental.notes,
-        status: rental.status
+        status: rental.status,
+        is_delivery_by_us: rental.is_delivery_by_us || false,
+        delivery_price: rental.delivery_price || 0
       });
+
+      // Manejar el estado disabled/enabled del delivery_price
+      const deliveryPriceControl = this.rentalForm.get('delivery_price');
+      if (rental.is_delivery_by_us) {
+        deliveryPriceControl?.enable();
+      } else {
+        deliveryPriceControl?.disable();
+      }
 
       // Limpiar productos existentes
       this.selectedProducts = [];
@@ -184,6 +207,8 @@ export class RentalsComponent implements OnInit {
     this.isEditing = false;
     this.currentRentalId = null;
     this.rentalForm.reset();
+    // Resetear el estado disabled del delivery_price
+    this.rentalForm.get('delivery_price')?.disable();
     this.selectedProducts = [];
     while (this.productsFormArray.length) {
       this.productsFormArray.removeAt(0);
@@ -213,10 +238,10 @@ export class RentalsComponent implements OnInit {
 
   onSubmit(): void {
     if (this.selectedProducts.length > 0) {
-      const rentalData = this.rentalForm.value;
+      const rentalData = this.rentalForm.getRawValue();
 
       // Validar que los campos requeridos estén llenos
-      if (!rentalData.client_name || !rentalData.start_date || !rentalData.end_date) {
+      if (!this.rentalForm.valid) {
         return;
       }
 
@@ -397,10 +422,12 @@ export class RentalsComponent implements OnInit {
   }
 
   calculateTotalPrice(rental: RentalAttributes): number {
-    return rental.products.reduce((total, product) => {
+    const totalPriceItems = rental.products.reduce((total, product) => {
       const quantity = product.RentalProduct?.quantity || 0;
       const price = product.price || 0;
       return total + (quantity * price);
     }, 0);
+
+    return totalPriceItems + (Number(rental.delivery_price) || 0);
   }
 }
