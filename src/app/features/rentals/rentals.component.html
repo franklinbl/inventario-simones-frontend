@@ -18,6 +18,7 @@
           <th>Flete</th>
           <th>Precio Total</th>
           <th>Estado</th>
+          <th>Creado por</th>
         </tr>
       </thead>
       <tbody>
@@ -35,10 +36,11 @@
                 {{ getStatusText(rental.status) }}
               </span>
             </td>
+            <td>{{ rental.created_by }}</td>
             </tr>
             @if (rental.expanded) {
               <tr class="details-row">
-                <td colspan="7">
+                <td colspan="8">
                   <div class="details-content">
                     <div class="container-products-list">
                       <h3>Productos Rentados</h3>
