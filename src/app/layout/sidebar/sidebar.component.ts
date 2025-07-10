@@ -22,25 +22,31 @@ export class SidebarComponent implements OnInit {
       permissions: ['Administrador', 'Empleado']
     },
     {
-      name: 'Rentals',
+      name: 'Rentas',
       icon: '🎉',
       route: '/rentals',
       permissions: ['Administrador', 'Empleado']
     },
     {
-      name: 'Inventory',
+      name: 'Inventario',
       icon: '📦',
       route: '/inventory',
       permissions: ['Administrador', 'Empleado']
     },
     {
-      name: 'Reports',
+      name: 'Reportes',
       icon: '📈',
       route: '/reports',
       permissions: ['Administrador']
     },
     {
-      name: 'Users',
+      name: 'Clientes',
+      icon: '👥',
+      route: '/clients',
+      permissions: ['Administrador']
+    },
+    {
+      name: 'Usuarios',
       icon: '👨🏽‍🔧',
       route: '/users',
       permissions: ['Administrador']
