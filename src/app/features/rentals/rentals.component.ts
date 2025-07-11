@@ -60,6 +60,7 @@ export class RentalsComponent implements OnInit {
       notes: [''],
       is_delivery_by_us: [false, [Validators.required]],
       delivery_price: [{value: null, disabled: true}, [Validators.min(0)]],
+      discount: [0, [Validators.min(0)]],
       products: this.fb.array([])
     });
 
@@ -427,6 +428,10 @@ export class RentalsComponent implements OnInit {
       const price = product.price || 0;
       return total + (quantity * price);
     }, 0);
+
+    if (rental.discount > 0) {
+      return (totalPriceItems - (totalPriceItems * (rental.discount / 100)) + (Number(rental.delivery_price) || 0));
+    }
 
     return totalPriceItems + (Number(rental.delivery_price) || 0);
   }

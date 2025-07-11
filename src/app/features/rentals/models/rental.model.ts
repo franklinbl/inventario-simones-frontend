@@ -16,6 +16,7 @@ export interface RentalAttributes {
   status: string;
   is_delivery_by_us: boolean;
   delivery_price: number;
+  discount: number;
   created_by: number;
   creator?: CreatorAttributes;
   products: ProductAttributes[]
