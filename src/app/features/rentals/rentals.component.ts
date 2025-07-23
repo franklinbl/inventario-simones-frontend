@@ -14,6 +14,7 @@ import { InventoryService } from '../inventory/services/inventory.service';
 import { ProductAttributes } from '../inventory/models/product.model';
 import { Observable, map, startWith } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { ClientsService } from '../clients/services/clients.service';
 
 @Component({
   selector: 'app-rentals',
@@ -37,6 +38,7 @@ export class RentalsComponent implements OnInit {
   private rentalService = inject(RentalService);
   private inventoryService = inject(InventoryService);
   private authService = inject(AuthService);
+  private clientsService = inject(ClientsService);
   private fb = inject(FormBuilder);
 
   rentals: (RentalAttributes & { expanded?: boolean })[] = [];
@@ -44,6 +46,7 @@ export class RentalsComponent implements OnInit {
   isEditing = false;
   currentRentalId: number | null = null;
   rentalForm: FormGroup;
+  clientForm: FormGroup;
   products: ProductAttributes[] = [];
   filteredProducts: Observable<ProductAttributes[]>;
   productFilterCtrl = this.fb.control('');
@@ -51,10 +54,11 @@ export class RentalsComponent implements OnInit {
   selectedProducts: { product: ProductAttributes; index: number }[] = [];
   isAdmin = false;
 
+  customInputValue: string = '';
+
   constructor() {
     this.rentalForm = this.fb.group({
-      client_name: ['', [Validators.required, Validators.minLength(3)]],
-      client_phone: ['', [Validators.required]],
+      client_id: [null],
       start_date: ['', [Validators.required]],
       end_date: ['', [Validators.required]],
       notes: [''],
@@ -62,6 +66,12 @@ export class RentalsComponent implements OnInit {
       delivery_price: [{value: null, disabled: true}, [Validators.min(0)]],
       discount: [0, [Validators.min(0)]],
       products: this.fb.array([])
+    });
+
+    this.clientForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      dni: ['', [Validators.required, Validators.minLength(7)]],
+      phone: ['', [Validators.required, Validators.minLength(7)]]
     });
 
     // Suscribirse a cambios en is_delivery_by_us para habilitar/deshabilitar delivery_price
@@ -276,9 +286,14 @@ export class RentalsComponent implements OnInit {
           }
         });
       } else {
-        this.rentalService.createRental(rentalData).subscribe({
+        this.rentalService.createRental(rentalData, this.clientForm.value).subscribe({
           next: (response) => {
             this.rentals.unshift(response.rental);
+            this.clientForm.reset();
+            this.customInputValue = '';
+            this.rentalForm.patchValue({
+              client_id: null
+            });
             this.closeModal();
           },
           error: (error) => {
@@ -434,5 +449,32 @@ export class RentalsComponent implements OnInit {
     }
 
     return totalPriceItems + (Number(rental.delivery_price) || 0);
+  }
+
+  logCustomInput(): void {
+    this.clientsService.getClientByDni(this.customInputValue).subscribe({
+      next: (client) => {
+        if (client) {
+          this.clientForm.patchValue({
+            name: client.name,
+            dni: client.dni,
+            phone: client.phone
+          });
+          this.rentalForm.patchValue({
+            client_id: client.id
+          });
+        } else {
+          alert('Cliente no encontrado, por favor ingrese los datos del cliente');
+          this.clientForm.reset();
+          this.customInputValue = '';
+          this.rentalForm.patchValue({
+            client_id: null
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error al obtener el cliente:', error);
+      }
+    });
   }
 }

@@ -104,42 +104,76 @@
          <button class="close-button" (click)="closeModal()">&times;</button>
        </div>
        <div class="modal-body">
-         <form [formGroup]="rentalForm" class="rental-form">
-           <div class="form-row">
-             <div class="form-group">
-               <label for="client_name">Nombre del Cliente</label>
-               <input
-                 type="text"
-                 id="client_name"
-                 formControlName="client_name"
-                 class="form-control"
-                 placeholder="Daniel Valera"
-                 [class.is-invalid]="rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched"
-               >
-               @if (rentalForm.get('client_name')?.invalid && rentalForm.get('client_name')?.touched) {
+        <form [formGroup]="clientForm" class="client-form">
+          <div class="form-row">
+            <div class="form-group" style="width: 100%;">
+              <label for="customInput">Input de prueba</label>
+              <div style="display: flex; align-items: center; gap: 0;">
+                <input
+                  type="text"
+                  id="customInput"
+                  [(ngModel)]="customInputValue"
+                  [ngModelOptions]="{standalone: true}"
+                  name="customInputValue"
+                  class="form-control"
+                  placeholder="Escribe algo..."
+                  style="border-top-right-radius: 0; border-bottom-right-radius: 0;"
+                >
+                <button type="button" class="primary-button" (click)="logCustomInput()" style="border-top-left-radius: 0; border-bottom-left-radius: 0; margin-left: -1px; height: 38px;">Cliente</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="name">Nombre del Cliente</label>
+              <input
+                type="text"
+                id="name"
+                formControlName="name"
+                class="form-control"
+                placeholder="Daniel Valera"
+                [class.is-invalid]="clientForm.get('name')?.invalid && clientForm.get('name')?.touched"
+              >
+              @if (clientForm.get('name')?.invalid && clientForm.get('name')?.touched) {
                 <div class="error-message">
-                  {{ getErrorMessage('client_name') }}
+                  {{ getErrorMessage('name') }}
                 </div>
-               }
-             </div>
-
-             <div class="form-group">
-               <label for="client_phone">Teléfono del Cliente</label>
-               <input
-                 type="tel"
-                 id="client_phone"
-                 formControlName="client_phone"
-                 class="form-control"
-                 [class.is-invalid]="rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched"
-               >
-               @if (rentalForm.get('client_phone')?.invalid && rentalForm.get('client_phone')?.touched) {
+              }
+            </div>
+            <div class="form-group">
+              <label for="dni">Cédula del Cliente</label>
+              <input
+                type="text"
+                id="dni"
+                formControlName="dni"
+                class="form-control"
+                placeholder="1234567890"
+                [class.is-invalid]="clientForm.get('dni')?.invalid && clientForm.get('dni')?.touched"
+              >
+              @if (clientForm.get('dni')?.invalid && clientForm.get('dni')?.touched) {
                 <div class="error-message">
-                  {{ getErrorMessage('client_phone') }}
+                  {{ getErrorMessage('dni') }}
                 </div>
-               }
-             </div>
-           </div>
+              }
+            </div>
+            <div class="form-group">
+              <label for="phone">Teléfono del Cliente</label>
+              <input
+                type="tel"
+                id="phone"
+                formControlName="phone"
+                class="form-control"
+                placeholder="04123456789"
+                [class.is-invalid]="clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched"
+              >
+              @if (clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('phone') }}
+                </div>
+              }
+            </div>
+          </div>
+        </form>
 
+        <form [formGroup]="rentalForm" class="rental-form" style="margin-top: 1rem;">
            <div class="form-row">
              <div class="form-group">
                <label for="start_date">Fecha de Renta</label>
@@ -298,7 +332,7 @@
 
            <div class="form-actions">
              <button class="secondary-button" (click)="closeModal()">Cancelar</button>
-             <button class="primary-button" (click)="onSubmit()" [disabled]="selectedProducts.length === 0">
+             <button class="primary-button" (click)="onSubmit()" [disabled]="selectedProducts.length === 0 || clientForm.invalid || rentalForm.invalid">
                {{ isEditing ? 'Actualizar' : 'Guardar' }}
              </button>
            </div>
