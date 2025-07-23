@@ -3,4 +3,5 @@ export interface ClientAttributes {
   name: string;
   phone: string;
   dni: string;
+  rentalCount?: string;
 }

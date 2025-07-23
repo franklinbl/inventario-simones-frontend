@@ -1,6 +1,27 @@
-<div class="clients-container">
-  <h1>Clientes</h1>
-  <div class="content">
-    <p>Contenido de clientes próximamente...</p>
+<div class="container">
+  <div class="header">
+    <h2>Clientes</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Cédula</th>
+          <th>Teléfono</th>
+          <th>Total de rentas</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (client of clients; track $index) {
+        <tr>
+          <td>{{ client.name }}</td>
+          <td>{{ client.dni }}</td>
+          <td>{{ client.phone }}</td>
+          <td>{{ client.rentalCount }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
   </div>
 </div>

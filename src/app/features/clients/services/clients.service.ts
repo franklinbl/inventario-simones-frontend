@@ -2,21 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-
-export interface Client {
-  id: number;
-  name: string;
-  dni: string;
-  phone: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreateClientDto {
-  name: string;
-  dni: string;
-  phone: string;
-}
+import { ClientAttributes } from '../Models/client.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,15 +12,15 @@ export class ClientsService {
 
   constructor(private http: HttpClient) {}
 
-  getClients(): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.API_URL}`);
+  getClients(): Observable<ClientAttributes[]> {
+    return this.http.get<ClientAttributes[]>(`${this.API_URL}`);
   }
 
-  getClientByDni(dni: string): Observable<Client> {
-    return this.http.get<Client>(`${this.API_URL}/${dni}/dni`);
+  getClientByDni(dni: string): Observable<ClientAttributes> {
+    return this.http.get<ClientAttributes>(`${this.API_URL}/${dni}/dni`);
   }
 
-  createClient(clientData: CreateClientDto): Observable<Client> {
-    return this.http.post<Client>(`${this.API_URL}`, clientData);
+  createClient(clientData: ClientAttributes): Observable<ClientAttributes> {
+    return this.http.post<ClientAttributes>(`${this.API_URL}`, clientData);
   }
 }
