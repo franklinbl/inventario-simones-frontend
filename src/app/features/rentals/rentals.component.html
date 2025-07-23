@@ -26,8 +26,8 @@
         @for (rental of rentals; track $index) {
           <ng-container>
             <tr (click)="toggleDetails(rental)">
-            <td>{{ rental.client_name }}</td>
-            <td>{{ rental.client_phone }}</td>
+            <td>{{ rental.client.name }}</td>
+            <td>{{ rental.client.phone }}</td>
             <td>{{ rental.start_date | date:'dd/MM/yyyy' }}</td>
             <td>{{ rental.end_date | date:'dd/MM/yyyy' }}</td>
             <td>{{ (rental.delivery_price | currency) || '-' }}</td>

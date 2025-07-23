@@ -164,14 +164,19 @@ export class RentalsComponent implements OnInit {
       const endDate = new Date(rental.end_date);
 
       this.rentalForm.patchValue({
-        client_name: rental.client_name,
-        client_phone: rental.client_phone,
+        client_id: rental.client.id,
         start_date: startDate.toISOString().split('T')[0],
         end_date: endDate.toISOString().split('T')[0],
         notes: rental.notes,
         status: rental.status,
         is_delivery_by_us: rental.is_delivery_by_us || false,
         delivery_price: rental.delivery_price || 0
+      });
+
+      this.clientForm.patchValue({
+        name: rental.client.name,
+        dni: rental.client.dni,
+        phone: rental.client.phone
       });
 
       // Manejar el estado disabled/enabled del delivery_price

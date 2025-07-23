@@ -1,4 +1,5 @@
 import { ProductAttributes } from "../../inventory/models/product.model";
+import { ClientAttributes } from "../../clients/Models/client.model";
 
 export interface CreatorAttributes {
   id: number;
@@ -8,8 +9,7 @@ export interface CreatorAttributes {
 
 export interface RentalAttributes {
   id: number;
-  client_name: string;
-  client_phone: string;
+  client: ClientAttributes;
   notes: string;
   start_date: Date;
   end_date: Date;
