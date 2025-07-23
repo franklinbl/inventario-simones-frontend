@@ -1,0 +1,246 @@
+
+<mat-dialog-content class="mat-typography">
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ modalTitle }}</h3>
+        <button class="close-button" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="clientForm" class="client-form">
+          <div class="form-row">
+            <div class="form-group" style="width: 100%;">
+              <label for="customInput">Buscar Usuario</label>
+              <div style="display: flex; align-items: center; gap: 0;">
+                <input
+                  type="text"
+                  id="customInput"
+                  [(ngModel)]="clientDniInput"
+                  [ngModelOptions]="{standalone: true}"
+                  name="customInputValue"
+                  class="form-control"
+                  placeholder="Escribe algo..."
+                  style="border-top-right-radius: 0; border-bottom-right-radius: 0;"
+                >
+                <button type="button" class="primary-button" (click)="searchClient()" style="border-top-left-radius: 0; border-bottom-left-radius: 0; margin-left: -1px; height: 38px;">Buscar</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="name">Nombre del Cliente</label>
+              <input
+                type="text"
+                id="name"
+                formControlName="name"
+                class="form-control"
+                placeholder="Daniel Valera"
+                [class.is-invalid]="clientForm.get('name')?.invalid && clientForm.get('name')?.touched"
+              >
+              @if (clientForm.get('name')?.invalid && clientForm.get('name')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('name') }}
+                </div>
+              }
+            </div>
+            <div class="form-group">
+              <label for="dni">Cédula del Cliente</label>
+              <input
+                type="text"
+                id="dni"
+                formControlName="dni"
+                class="form-control"
+                placeholder="1234567890"
+                [class.is-invalid]="clientForm.get('dni')?.invalid && clientForm.get('dni')?.touched"
+              >
+              @if (clientForm.get('dni')?.invalid && clientForm.get('dni')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('dni') }}
+                </div>
+              }
+            </div>
+            <div class="form-group">
+              <label for="phone">Teléfono del Cliente</label>
+              <input
+                type="tel"
+                id="phone"
+                formControlName="phone"
+                class="form-control"
+                placeholder="04123456789"
+                [class.is-invalid]="clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched"
+              >
+              @if (clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('phone') }}
+                </div>
+              }
+            </div>
+          </div>
+        </form>
+
+        <form [formGroup]="rentalForm" class="rental-form" style="margin-top: 1rem;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="start_date">Fecha de Renta</label>
+              <input
+                type="date"
+                id="start_date"
+                formControlName="start_date"
+                class="form-control"
+                [class.is-invalid]="rentalForm.get('start_date')?.invalid && rentalForm.get('start_date')?.touched"
+              >
+              @if (rentalForm.get('start_date')?.invalid && rentalForm.get('start_date')?.touched) {
+               <div class="error-message">
+                 {{ getErrorMessage('start_date') }}
+               </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="end_date">Fecha de Devolución</label>
+              <input
+                type="date"
+                id="end_date"
+                formControlName="end_date"
+                class="form-control"
+                [class.is-invalid]="rentalForm.get('end_date')?.invalid && rentalForm.get('end_date')?.touched"
+              >
+              @if (rentalForm.get('end_date')?.invalid && rentalForm.get('end_date')?.touched) {
+               <div class="error-message">
+                 {{ getErrorMessage('end_date') }}
+               </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="delivery_type">Tipo de Transporte</label>
+              <mat-form-field class="delivery-select">
+                <mat-select formControlName="is_delivery_by_us" placeholder="Seleccionar tipo de transporte">
+                  <mat-option [value]="true">Transporte por nosotros</mat-option>
+                  <mat-option [value]="false">Transporte por cliente</mat-option>
+                </mat-select>
+              </mat-form-field>
+              @if (rentalForm.get('is_delivery_by_us')?.invalid && rentalForm.get('is_delivery_by_us')?.touched) {
+               <div class="error-message">
+                 {{ getErrorMessage('is_delivery_by_us') }}
+               </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="delivery_price">Precio del transporte</label>
+              <input
+                type="number"
+                id="delivery_price"
+                formControlName="delivery_price"
+                class="form-control"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                [class.is-invalid]="rentalForm.get('delivery_price')?.invalid && rentalForm.get('delivery_price')?.touched"
+              >
+              @if (rentalForm.get('delivery_price')?.invalid && rentalForm.get('delivery_price')?.touched) {
+               <div class="error-message">
+                 {{ getErrorMessage('delivery_price') }}
+               </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+           <div class="form-group">
+             <label for="discount">Descuento a cliente</label>
+             <input
+               type="number"
+               id="discount"
+               formControlName="discount"
+               class="form-control"
+               placeholder="0.00"
+               min="0"
+               step="0.01"
+               [class.is-invalid]="rentalForm.get('discount')?.invalid && rentalForm.get('discount')?.touched"
+             >
+             @if (rentalForm.get('discount')?.invalid && rentalForm.get('discount')?.touched) {
+              <div class="error-message">
+                {{ getErrorMessage('discount') }}
+              </div>
+             }
+           </div>
+          </div>
+
+          <div class="form-group">
+           <label for="notes">Notas</label>
+           <textarea
+             id="notes"
+             formControlName="notes"
+             class="form-control"
+             rows="3"
+           ></textarea>
+         </div>
+
+          <div class="form-group">
+            <label>Productos</label>
+            <mat-form-field class="product-select">
+              <mat-select [formControl]="selectedProductCtrl" placeholder="Sillas">
+                <mat-option>
+                  <ngx-mat-select-search
+                    [formControl]="productFilterCtrl"
+                    placeholderLabel="Buscar producto..."
+                    noEntriesFoundLabel="No se encontraron productos"
+                  ></ngx-mat-select-search>
+                </mat-option>
+                @for (product of filteredProducts | async; track $index) {
+                 <mat-option [value]="product">
+                   {{product.name}} - Stock: {{product.available_quantity}}
+                 </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            @if (selectedProducts.length > 0) {
+              <div class="selected-products-list">
+               @for (item of selectedProducts; track $index) {
+                <div class="selected-product">
+                  <div class="product-info">
+                    <span class="product-name">{{item.product.name}}</span>
+                    <span class="product-stock">Stock disponible: {{item.product.available_quantity}}</span>
+                  </div>
+                  <div class="product-quantity">
+                    <div class="form-group">
+                      <label for="quantity"><small>Cantidad</small></label>
+                      <input
+                        type="number"
+                        id="quantity"
+                        [min]="1"
+                        [max]="item.product.available_quantity"
+                        [formControl]="$any(productsFormArray.at($index).get('quantity'))"
+                        class="form-control"
+                        placeholder="10"
+                      >
+                      @if (productsFormArray.at($index).get('quantity')?.invalid && productsFormArray.at($index).get('quantity')?.touched) {
+                       <div class="error-message">
+                         {{ getQuantityErrorMessage($index) }}
+                       </div>
+                      }
+                    </div>
+                    <button mat-icon-button color="warn" (click)="removeProduct(item.product.id)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+               }
+              </div>
+            }
+          </div>
+
+          <div class="form-actions">
+            <button class="secondary-button" (click)="closeModal()">Cancelar</button>
+            <button class="primary-button" (click)="onSubmit()" [disabled]="selectedProducts.length === 0 || clientForm.invalid || rentalForm.invalid">
+              {{ isEditing ? 'Actualizar' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
