@@ -73,9 +73,9 @@ export class AddUpdateRentalComponent implements OnInit {
     });
 
     this.clientForm = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      dni: ['', [Validators.required, Validators.minLength(7)]],
-      phone: ['', [Validators.required, Validators.minLength(7)]]
+      name: [{ value: null, disabled: true }, [Validators.required, Validators.minLength(3)]],
+      dni: [{ value: null, disabled: true }, [Validators.required, Validators.minLength(7)]],
+      phone: [{ value: null, disabled: true }, [Validators.required, Validators.minLength(7)]]
     });
 
     this.rentalForm.get('is_delivery_by_us')?.valueChanges.subscribe(isDeliveryByUs => {
@@ -250,10 +250,12 @@ export class AddUpdateRentalComponent implements OnInit {
           this.rentalForm.patchValue({
             client_id: client.id
           });
+          this.clientForm.get('name')?.disable();
+          this.clientForm.get('dni')?.disable();
+          this.clientForm.get('phone')?.disable();
         } else {
-          alert('Cliente no encontrado, por favor ingrese los datos del cliente');
+          alert('Cliente no encontrado, por favor verifique la cédula del cliente');
           this.clientForm.reset();
-          this.clientDniInput = '';
           this.rentalForm.patchValue({
             client_id: null
           });
@@ -262,6 +264,17 @@ export class AddUpdateRentalComponent implements OnInit {
       error: (error) => {
         console.error('Error al obtener el cliente:', error);
       }
+    });
+  }
+
+  newClient() {
+    this.clientDniInput = '';
+    this.clientForm.reset();
+    this.clientForm.get('name')?.enable();
+    this.clientForm.get('dni')?.enable();
+    this.clientForm.get('phone')?.enable();
+    this.rentalForm.patchValue({
+      client_id: null
     });
   }
 
