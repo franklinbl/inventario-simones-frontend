@@ -51,7 +51,7 @@ export class LoginComponent {
       .subscribe({
         next: (success) => {
           if (success) {
-            const returnUrl = this.router.parseUrl(this.router.url).queryParams['returnUrl'] || '/inventory';
+            const returnUrl = this.router.parseUrl(this.router.url).queryParams['returnUrl'] || '/';
             this.router.navigateByUrl(returnUrl);
           } else {
             this.errorMessage = 'Usuario o contraseña incorrectos';

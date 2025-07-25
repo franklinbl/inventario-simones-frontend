@@ -10,6 +10,7 @@
           <th>Cédula</th>
           <th>Teléfono</th>
           <th>Total de rentas</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -19,6 +20,11 @@
           <td>{{ client.dni }}</td>
           <td>{{ client.phone }}</td>
           <td>{{ client.rentalCount }}</td>
+          <td>
+            <button class="secondary-button" (click)="updateClient(client)">
+              Editar
+            </button>
+          </td>
         </tr>
         }
       </tbody>

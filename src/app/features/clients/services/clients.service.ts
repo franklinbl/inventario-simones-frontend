@@ -23,4 +23,8 @@ export class ClientsService {
   createClient(clientData: ClientAttributes): Observable<ClientAttributes> {
     return this.http.post<ClientAttributes>(`${this.API_URL}`, clientData);
   }
+
+  updateClient(id: number, client: Partial<ClientAttributes>): Observable<{message: string, client: ClientAttributes}> {
+    return this.http.put<{message: string, client: ClientAttributes}>(`${this.API_URL}/${id}`, client);
+  }
 }

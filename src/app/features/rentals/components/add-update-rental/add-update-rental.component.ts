@@ -207,7 +207,7 @@ export class AddUpdateRentalComponent implements OnInit {
       }
 
       if (this.isEditing && this.currentRentalId) {
-          this.rentalService.updateRental(this.currentRentalId, rentalData).subscribe({
+          this.rentalService.updateRental(this.currentRentalId, rentalData, this.clientForm.value).subscribe({
             next: (response) => {
               this.closeModal(response.rental);
             },

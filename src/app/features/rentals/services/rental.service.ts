@@ -20,8 +20,8 @@ export class RentalService {
     return this.http.post<{message: string,rental: RentalAttributes}>(this.apiUrl, {rental, client});
   }
 
-  updateRental(id: number, rentalData: Partial<RentalAttributes>): Observable<{message: string, rental: RentalAttributes}> {
-    return this.http.put<{message: string, rental: RentalAttributes}>(`${this.apiUrl}/${id}`, rentalData);
+  updateRental(id: number, rental: Partial<RentalAttributes>, client: ClientAttributes): Observable<{message: string, rental: RentalAttributes}> {
+    return this.http.put<{message: string, rental: RentalAttributes}>(`${this.apiUrl}/${id}`, {rental, client});
   }
 
   completedRental(id: number): Observable<RentalAttributes> {
