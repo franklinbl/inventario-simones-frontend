@@ -35,7 +35,7 @@
             <td>$ {{ calculateTotalPrice(rental) | number:'1.2-2' }}</td>
             <td>
               <span class="status-badge" [ngClass]="getStatusClass(rental.status)">
-                {{ getStatusText(rental.status) }}
+                {{ rental.status | statusRentals }}
               </span>
             </td>
             <td>{{ rental.creator?.name }}</td>

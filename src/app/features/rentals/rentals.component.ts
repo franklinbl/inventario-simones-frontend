@@ -11,6 +11,7 @@ import { AuthService } from '../../services/auth.service';
 import { AddUpdateRentalComponent } from './components/add-update-rental/add-update-rental.component';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { CompletedRentalComponent } from './components/completed-rental/completed-rental.component';
+import { StatusRentalsPipe } from './pipes/status-rentals.pipe';
 
 @Component({
   selector: 'app-rentals',
@@ -19,7 +20,8 @@ import { CompletedRentalComponent } from './components/completed-rental/complete
     CommonModule,
     MatIconModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    StatusRentalsPipe
   ],
   templateUrl: './rentals.component.html',
   styleUrls: ['./rentals.component.scss']
@@ -97,21 +99,6 @@ export class RentalsComponent implements OnInit {
         return 'status-cancelled';
       default:
         return '';
-    }
-  }
-
-  getStatusText(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return 'Pendiente';
-      case 'active':
-        return 'Activa';
-      case 'completed':
-        return 'Completada';
-      case 'cancelled':
-        return 'Cancelada';
-      default:
-        return status;
     }
   }
 
