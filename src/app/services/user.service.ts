@@ -19,7 +19,7 @@ export interface CreateUserDto {
   name: string;
   username: string;
   password: string;
-  roleId: number;
+  role_id: number;
 }
 
 @Injectable({

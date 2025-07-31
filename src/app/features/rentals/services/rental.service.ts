@@ -24,8 +24,8 @@ export class RentalService {
     return this.http.put<{message: string, rental: RentalAttributes}>(`${this.apiUrl}/${id}`, {rental, client});
   }
 
-  completedRental(id: number): Observable<RentalAttributes> {
-    return this.http.put<RentalAttributes>(`${this.apiUrl}/${id}/complete`, {});
+  completedRental(rental: RentalAttributes): Observable<{message: string, rental: RentalAttributes}> {
+    return this.http.post<{message: string, rental: RentalAttributes}>(`${this.apiUrl}/complete-rental`, rental);
   }
 
   downloadInvoice(rentalId: number): Observable<HttpResponse<Blob>> {

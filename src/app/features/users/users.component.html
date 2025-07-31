@@ -110,19 +110,19 @@
         </div>
 
         <div class="form-group">
-          <label for="roleId">Rol</label>
+          <label for="role_id">Rol</label>
           <select
-            id="roleId"
-            formControlName="roleId"
+            id="role_id"
+            formControlName="role_id"
             class="form-control"
-            [class.is-invalid]="userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched"
+            [class.is-invalid]="userForm.get('role_id')?.invalid && userForm.get('role_id')?.touched"
           >
             <option [ngValue]="1">Administrador</option>
             <option [ngValue]="2">Empleado</option>
           </select>
-          @if (userForm.get('roleId')?.invalid && userForm.get('roleId')?.touched) {
+          @if (userForm.get('role_id')?.invalid && userForm.get('role_id')?.touched) {
             <div class="error-message">
-              {{ getErrorMessage('roleId') }}
+              {{ getErrorMessage('role_id') }}
             </div>
           }
         </div>

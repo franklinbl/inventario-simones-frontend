@@ -56,8 +56,8 @@
                           Ver nota de entrega
                         </button>
                         @if (rental.status !== 'completed' && isAdmin) {
-                          <button class="secondary-button" (click)="rentalCompleted(rental.id)">
-                            Renta completada
+                          <button class="primary-button" (click)="rentalCompleted(rental)">
+                            Completar renta
                           </button>
                         }
                       </div>
@@ -67,7 +67,7 @@
                         <tr>
                           <th>Producto</th>
                           <th>Descripción</th>
-                          <th>Cantidad</th>
+                          <th>Cantidad rentada</th>
                           <th>Precio</th>
                           <th>Total</th>
                         </tr>
@@ -77,9 +77,9 @@
                           <tr>
                             <td>{{ item.name }}</td>
                             <td>{{ item.description }}</td>
-                            <td>{{ item.RentalProduct?.quantity }}</td>
+                            <td>{{ item.rental_product?.quantity_rented }}</td>
                             <td>{{ item.price | currency}}</td>
-                            <td>{{ ((item.price || 0) * (item.RentalProduct?.quantity || 0)) | currency}}</td>
+                            <td>{{ ((item.price || 0) * (item.rental_product?.quantity_rented || 0)) | currency}}</td>
                           </tr>
                         }
                       </tbody>

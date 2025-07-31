@@ -1,0 +1,85 @@
+<h2 mat-dialog-title>Completar renta</h2>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="rentalForm" class="rental-form" style="margin-top: 1rem;">
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="status">Estado de la renta</label>
+        <mat-form-field class="status-select">
+          <mat-select formControlName="status" placeholder="Seleccionar un estado">
+            <mat-option value="with_issues">
+              <mat-icon style="color: rgb(186, 186, 14)">warning</mat-icon>Con problemas
+            </mat-option>
+            <mat-option value="completed">
+              <mat-icon style="color: rgb(31, 130, 31);">check_circle</mat-icon>Completada
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        @if (rentalForm.get('status')?.invalid && rentalForm.get('status')?.touched) {
+         <div class="error-message">
+           {{ getErrorMessage('status') }}
+         </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="date_returned">Fecha de regreso</label>
+        <input
+          type="date"
+          id="date_returned"
+          formControlName="date_returned"
+          class="form-control"
+          [class.is-invalid]="rentalForm.get('date_returned')?.invalid && rentalForm.get('date_returned')?.touched"
+        >
+        @if (rentalForm.get('date_returned')?.invalid && rentalForm.get('date_returned')?.touched) {
+         <div class="error-message">
+           {{ getErrorMessage('date_returned') }}
+         </div>
+        }
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="return_notes">Notas de la entrega</label>
+      <textarea
+        id="return_notes"
+        formControlName="return_notes"
+        class="form-control"
+        rows="5"
+      ></textarea>
+    </div>
+
+    <p>Productos rentados</p>
+    <div class="selected-products-list">
+      @for (item of selectedProducts; track $index) {
+      <div class="selected-product">
+        <div class="product-info">
+          <span class="product-name">{{item.product.name}}</span>
+          <span class="product-stock">Productos rentados: {{item.product.rental_product?.quantity_rented}}</span>
+        </div>
+        <div class="product-quantity">
+          <div class="form-group">
+            <label for="quantity_returned"><small>Cantidad devuelta:</small></label>
+            <input
+              type="number"
+              id="quantity_returned"
+              [min]="1"
+              [max]="item.product.available_quantity"
+              [formControl]="$any(productsFormArray.at($index).get('quantity_returned'))"
+              class="form-control"
+              placeholder="10"
+            >
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="form-actions">
+      <button class="secondary-button" (click)="closeModal()">Cancelar</button>
+      <button class="primary-button" (click)="onSubmit()" [disabled]="rentalForm.invalid">
+        Guardar
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

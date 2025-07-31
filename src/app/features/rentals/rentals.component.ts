@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
 
 import { AddUpdateRentalComponent } from './components/add-update-rental/add-update-rental.component';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
+import { CompletedRentalComponent } from './components/completed-rental/completed-rental.component';
 
 @Component({
   selector: 'app-rentals',
@@ -114,17 +115,30 @@ export class RentalsComponent implements OnInit {
     }
   }
 
-  rentalCompleted(rentalId: number) {
-    this.rentalService.completedRental(rentalId).subscribe({
-      next: () => {
-        const index = this.rentals.findIndex(r => r.id === rentalId);
-        if (index !== -1) {
-          this.rentals[index].status = 'completed';
-        }
-      },
-      error: (error) => {
-        console.error('Error al cerrar una renta:', error);
+  rentalCompleted(rental: RentalAttributes) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.enterAnimationDuration = 0;
+
+    const title = 'Completar renta'
+
+    dialogConfig.data = {
+      rental,
+      title
+    };
+
+    const dialogRef =  this.dialog.open(CompletedRentalComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      const index = this.rentals.findIndex(r => r.id === result.id);
+      if (index !== -1) {
+        // this.rentals[index] = { ...this.rentals[index], ...result };
+        this.rentals[index].status = result.status,
+        this.rentals[index].date_returned = result.date_returned,
+        this.rentals[index].return_notes = result.return_notes,
+        this.rentals[index].products = result.products
       }
+    console.log(this.rentals);
     });
   }
 
@@ -169,7 +183,7 @@ export class RentalsComponent implements OnInit {
 
   calculateTotalPrice(rental: RentalAttributes): number {
     const totalPriceItems = rental.products.reduce((total, product) => {
-      const quantity = product.RentalProduct?.quantity || 0;
+      const quantity = product.rental_product?.quantity_rented || 0;
       const price = product.price || 0;
       return total + (quantity * price);
     }, 0);

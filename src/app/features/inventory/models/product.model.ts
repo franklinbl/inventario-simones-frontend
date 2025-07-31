@@ -5,7 +5,8 @@ export interface ProductAttributes {
   total_quantity: number;
   available_quantity: number;
   price: number;
-  RentalProduct? : {
-    quantity: number;
+  rental_product? : {
+    quantity_rented: number;
+    quantity_returned: number;
   }
 }

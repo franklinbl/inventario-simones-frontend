@@ -94,7 +94,7 @@ export class AddUpdateRentalComponent implements OnInit {
         const index = this.productsFormArray.length;
         this.productsFormArray.push(this.formBuilder.group({
           product_id: [product.id],
-          quantity: [null, [
+          quantity_rented: [null, [
             Validators.required,
             Validators.min(1),
             this.maxStockValidator(product.available_quantity)
@@ -152,10 +152,10 @@ export class AddUpdateRentalComponent implements OnInit {
       // Agregar productos del rental
       this.oldRental.products.forEach(product => {
         const index = this.productsFormArray.length;
-        const currentQuantity = product.RentalProduct?.quantity || 0;
+        const currentQuantity = product.rental_product?.quantity_rented || 0;
         this.productsFormArray.push(this.formBuilder.group({
           product_id: [product.id],
-          quantity: [currentQuantity, [
+          quantity_rented: [currentQuantity, [
             Validators.required,
             Validators.min(1),
             this.maxStockValidator(product.available_quantity, currentQuantity)
@@ -192,20 +192,20 @@ export class AddUpdateRentalComponent implements OnInit {
 
       // Validar que todas las cantidades sean válidas
       const hasInvalidQuantities = this.productsFormArray.controls.some(control => {
-        const quantity = control.get('quantity')?.value;
+        const quantity_rented = control.get('quantity_rented')?.value;
         const product = this.selectedProducts.find(sp => sp.index === this.productsFormArray.controls.indexOf(control))?.product;
         if (!product) return true;
 
-        const currentQuantity = product.RentalProduct?.quantity || 0;
+        const currentQuantity = product.rental_product?.quantity_rented || 0;
         const maxAllowed = this.isEditing ? product.available_quantity + currentQuantity : product.available_quantity;
 
-        return quantity <= 0 || quantity > maxAllowed;
+        return quantity_rented <= 0 || quantity_rented > maxAllowed;
       });
 
       if (hasInvalidQuantities) {
         return;
       }
-
+      console.log(rentalData);
       if (this.isEditing && this.currentRentalId) {
           this.rentalService.updateRental(this.currentRentalId, rentalData, this.clientForm.value).subscribe({
             next: (response) => {
@@ -234,6 +234,7 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   closeModal(data?: RentalAttributes) {
+    console.log(this.rentalForm);
     this.dialogRef.close(data);
   }
 
@@ -315,7 +316,7 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   getQuantityErrorMessage(index: number): string {
-    const control = this.productsFormArray.at(index).get('quantity');
+    const control = this.productsFormArray.at(index).get('quantity_rented');
     if (control?.hasError('required')) {
       return 'La cantidad es requerida';
     }

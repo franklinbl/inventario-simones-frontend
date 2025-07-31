@@ -212,13 +212,13 @@
                   </div>
                   <div class="product-quantity">
                     <div class="form-group">
-                      <label for="quantity"><small>Cantidad</small></label>
+                      <label for="quantity_rented"><small>Cantidad</small></label>
                       <input
                         type="number"
-                        id="quantity"
+                        id="quantity_rented"
                         [min]="1"
                         [max]="item.product.available_quantity"
-                        [formControl]="$any(productsFormArray.at($index).get('quantity'))"
+                        [formControl]="$any(productsFormArray.at($index).get('quantity_rented'))"
                         class="form-control"
                         placeholder="10"
                       >

@@ -28,7 +28,7 @@ export class UsersComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      roleId: [null, Validators.required]
+      role_id: [null, Validators.required]
     });
   }
 
@@ -57,7 +57,7 @@ export class UsersComponent implements OnInit {
 
   openModal(): void {
     this.isModalOpen = true;
-    this.userForm.reset({ roleId: 1 });
+    this.userForm.reset({ role_id: 1 });
   }
 
   closeModal(): void {
