@@ -1,0 +1,122 @@
+<mat-dialog-content class="mat-typography">
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ modalTitle }}</h3>
+        <button class="close-button" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+          <div class="input-group">
+            <div class="form-group">
+              <label for="code">Código</label>
+              <input
+                type="text"
+                id="code"
+                formControlName="code"
+                class="form-control"
+                [class.is-invalid]="productForm.get('code')?.invalid && productForm.get('code')?.touched"
+              >
+              @if (productForm.get('code')?.invalid && productForm.get('code')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('code') }}
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="name">Nombre</label>
+              <input
+                type="text"
+                id="name"
+                formControlName="name"
+                class="form-control"
+                [class.is-invalid]="productForm.get('name')?.invalid && productForm.get('name')?.touched"
+              >
+              @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('name') }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="form-group">
+              <label for="price">Precio</label>
+              <input
+                type="number"
+                id="price"
+                formControlName="price"
+                class="form-control"
+                placeholder="0"
+                [class.is-invalid]="productForm.get('price')?.invalid && productForm.get('price')?.touched"
+              >
+              @if (productForm.get('price')?.invalid && productForm.get('price')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('price') }}
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="total_quantity">Cantidad Total</label>
+              <input
+                type="number"
+                id="total_quantity"
+                formControlName="total_quantity"
+                class="form-control"
+                placeholder="0"
+                [class.is-invalid]="productForm.get('total_quantity')?.invalid && productForm.get('total_quantity')?.touched"
+              >
+              @if (productForm.get('total_quantity')?.invalid && productForm.get('total_quantity')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('total_quantity') }}
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="available_quantity">Cantidad Disponible</label>
+              <input
+                type="number"
+                id="available_quantity"
+                formControlName="available_quantity"
+                class="form-control"
+                placeholder="0"
+                [class.is-invalid]="productForm.get('available_quantity')?.invalid && productForm.get('available_quantity')?.touched"
+              >
+              @if (productForm.get('available_quantity')?.invalid && productForm.get('available_quantity')?.touched) {
+                <div class="error-message">
+                  {{ getErrorMessage('available_quantity') }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Descripción</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              class="form-control"
+              [class.is-invalid]="productForm.get('description')?.invalid && productForm.get('description')?.touched"
+            ></textarea>
+            @if (productForm.get('description')?.invalid && productForm.get('description')?.touched) {
+              <div class="error-message">
+                {{ getErrorMessage('description') }}
+              </div>
+            }
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="secondary-button" (click)="closeModal()">Cancelar</button>
+            <button type="submit" class="primary-button" [disabled]="productForm.invalid">
+              {{ isEditing ? 'Actualizar' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

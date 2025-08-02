@@ -205,7 +205,7 @@ export class AddUpdateRentalComponent implements OnInit {
       if (hasInvalidQuantities) {
         return;
       }
-      console.log(rentalData);
+
       if (this.isEditing && this.currentRentalId) {
           this.rentalService.updateRental(this.currentRentalId, rentalData, this.clientForm.value).subscribe({
             next: (response) => {
@@ -234,7 +234,6 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   closeModal(data?: RentalAttributes) {
-    console.log(this.rentalForm);
     this.dialogRef.close(data);
   }
 

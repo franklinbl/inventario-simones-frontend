@@ -5,22 +5,23 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { InventoryService, PaginationResponse } from './services/inventory.service';
 import { ProductAttributes } from './models/product.model';
 import { AuthService } from '../../services/auth.service';
+import { AddUpdateProductComponent } from './components/add-update-inventary/add-update-inventory.component';
+import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
+  imports: [CommonModule, HttpClientModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss']
 })
 export class InventoryComponent implements OnInit {
   private inventoryService = inject(InventoryService);
-  private fb = inject(FormBuilder);
+  readonly dialog = inject(MatDialog);
   private authService = inject(AuthService);
   isAdmin = false;
   products: ProductAttributes[] = [];
   isModalOpen = false;
-  productForm: FormGroup;
   editingProductId: number | null = null;
   currentPage = 1;
   totalPages = 1;
@@ -30,13 +31,7 @@ export class InventoryComponent implements OnInit {
   hasPreviousPage = false;
 
   constructor() {
-    this.productForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      description: [''],
-      total_quantity: [null, [Validators.required, Validators.min(0)]],
-      available_quantity: [null, [Validators.required, Validators.min(0)]],
-      price: [null, [Validators.required, Validators.min(0)]]
-    });
+
   }
 
   ngOnInit(): void {
@@ -114,77 +109,33 @@ export class InventoryComponent implements OnInit {
     return pages;
   }
 
-  openModal(product?: ProductAttributes): void {
-    if (product) {
-      this.editingProductId = product.id;
-      this.productForm.patchValue({
-        name: product.name,
-        description: product.description,
-        total_quantity: product.total_quantity,
-        available_quantity: product.available_quantity,
-        price: product.price
-      });
-    } else {
-      this.editingProductId = null;
-      this.productForm.reset();
-    }
-    this.isModalOpen = true;
-  }
-
-  closeModal(): void {
-    this.isModalOpen = false;
-    this.editingProductId = null;
-    this.productForm.reset();
-  }
-
-  onSubmit(): void {
-    if (this.productForm.valid) {
-      const productData = this.productForm.value;
-
-      if (this.editingProductId) {
-        // Actualizar producto existente
-        this.inventoryService.updateProduct(this.editingProductId, productData).subscribe({
-          next: (updatedProduct) => {
-            const index = this.products.findIndex(p => p.id === this.editingProductId);
-            if (index !== -1) {
-              this.products[index] = updatedProduct;
-            }
-            this.closeModal();
-          },
-          error: (error) => {
-            console.error('Error al actualizar producto:', error);
-          }
-        });
-      } else {
-        // Crear nuevo producto
-        this.inventoryService.createProduct(productData).subscribe({
-          next: (response) => {
-            this.products.push(response.product);
-            this.closeModal();
-          },
-          error: (error) => {
-            console.error('Error al crear producto:', error);
-          }
-        });
-      }
-    }
-  }
-
-  getErrorMessage(controlName: string): string {
-    const control = this.productForm.get(controlName);
-    if (control?.hasError('required')) {
-      return 'Este campo es requerido';
-    }
-    if (control?.hasError('minlength')) {
-      return `Mínimo ${control.errors?.['minlength'].requiredLength} caracteres`;
-    }
-    if (control?.hasError('min')) {
-      return 'El valor debe ser mayor o igual a 0';
-    }
-    return '';
-  }
-
   get modalTitle(): string {
     return this.editingProductId ? 'Editar Producto' : 'Nuevo Producto';
+  }
+
+  createEditProduct (product?: ProductAttributes | null) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.enterAnimationDuration = 0;
+
+    const title = (!product ? 'Nuevo producto' : 'Actualizar producto')
+
+    dialogConfig.data = {
+      product: product || null,
+      title
+    };
+
+    const dialogRef =  this.dialog.open(AddUpdateProductComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+      if (!product) {
+        this.products.unshift(result);
+      } else {
+        const index = this.products.findIndex(p => p.id === result.id);
+        if (index !== -1) {
+          this.products[index] = result;
+        }
+      }
+    });
   }
 }
