@@ -1,7 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { InventoryService } from './services/inventory.service';
 import { ProductAttributes } from './models/product.model';
 import { AuthService } from '../../services/auth.service';
@@ -11,7 +10,11 @@ import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/d
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, ReactiveFormsModule, MatDialogModule],
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    FormsModule,
+  ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss']
 })
@@ -29,6 +32,7 @@ export class InventoryComponent implements OnInit {
   itemsPerPage = 0;
   hasNextPage = false;
   hasPreviousPage = false;
+  searchQuery = '';
 
   constructor() {
 
@@ -41,11 +45,10 @@ export class InventoryComponent implements OnInit {
   }
 
   private loadProducts(page: number = 1): void {
-    const currentlyDate = new Date().toDateString();
+    const currentlyDate = new Date().toISOString().split('T')[0];
     this.inventoryService.getAvailableProducts(currentlyDate, currentlyDate).subscribe({
       next: (response) => {
         this.products = response.products;
-        console.log(response);
       },
       error: (error) => {
         console.error('Error al cargar productos:', error);
@@ -133,5 +136,9 @@ export class InventoryComponent implements OnInit {
         }
       }
     });
+  }
+
+  searchProduct() {
+    console.log(this.searchQuery);
   }
 }

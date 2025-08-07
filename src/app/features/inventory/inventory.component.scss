@@ -124,3 +124,27 @@ h3 {
   font-size: 18px;
   margin-bottom: 15px;
 }
+
+.search-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-control {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+  }
+
+  &.is-invalid {
+    border-color: #dc3545;
+  }
+}

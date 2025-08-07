@@ -43,7 +43,7 @@ export class InventoryService {
       params.term = term;
     }
 
-    return this.http.get<{message: string, products: ProductAttributes[]}>(this.apiUrl, { params });
+      return this.http.get<{message: string, products: ProductAttributes[]}>(`${this.apiUrl}/available`, { params });
   }
 
   createProduct(product: Omit<ProductAttributes, 'id'>): Observable<{message: string, product: ProductAttributes}> {

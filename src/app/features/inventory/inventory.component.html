@@ -7,6 +7,14 @@
       </button>
     }
   </div>
+
+  <div class="search-container">
+    <input class="form-control" type="text" placeholder="Buscar producto" [(ngModel)]="searchQuery">
+    <button class="primary-button" (click)="searchProduct()">
+      Buscar producto
+    </button>
+  </div>
+
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -15,8 +23,8 @@
           <th>Nombre</th>
           <th>Descripción</th>
           <th>Precio</th>
-          <th>Cantidad Total</th>
           <th>Cantidad Disponible</th>
+          <th>Cantidad Total</th>
           @if (isAdmin) {
             <th></th>
           }
@@ -29,8 +37,8 @@
           <td>{{ product.name }}</td>
           <td>{{ product.description }}</td>
           <td>{{ product.price | currency }}</td>
-          <td>{{ product.total_quantity }}</td>
           <td>{{ product.available_quantity }}</td>
+          <td>{{ product.total_quantity }}</td>
           @if (isAdmin) {
           <td>
               <button class="edit-button" (click)="createEditProduct(product)">
