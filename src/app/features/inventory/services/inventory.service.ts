@@ -33,6 +33,19 @@ export class InventoryService {
     return this.http.get<PaginationResponse>(this.apiUrl, { params });
   }
 
+  getAvailableProducts(startDate: string, endDate: string, term: string = ''): Observable<{message: string, products: ProductAttributes[]}> {
+    const params: any = {
+      start_date: startDate,
+      end_date: endDate
+    };
+
+    if (term.trim()) {
+      params.term = term;
+    }
+
+    return this.http.get<{message: string, products: ProductAttributes[]}>(this.apiUrl, { params });
+  }
+
   createProduct(product: Omit<ProductAttributes, 'id'>): Observable<{message: string, product: ProductAttributes}> {
     return this.http.post<{message: string, product: ProductAttributes}>(this.apiUrl, product);
   }

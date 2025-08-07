@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InventoryService, PaginationResponse } from './services/inventory.service';
+import { InventoryService } from './services/inventory.service';
 import { ProductAttributes } from './models/product.model';
 import { AuthService } from '../../services/auth.service';
 import { AddUpdateProductComponent } from './components/add-update-inventary/add-update-inventory.component';
@@ -41,15 +41,11 @@ export class InventoryComponent implements OnInit {
   }
 
   private loadProducts(page: number = 1): void {
-    this.inventoryService.getProducts(page, 20).subscribe({
-      next: (response: PaginationResponse) => {
+    const currentlyDate = new Date().toDateString();
+    this.inventoryService.getAvailableProducts(currentlyDate, currentlyDate).subscribe({
+      next: (response) => {
         this.products = response.products;
-        this.currentPage = response.pagination.currentPage;
-        this.totalPages = response.pagination.totalPages;
-        this.totalItems = response.pagination.total;
-        this.itemsPerPage = response.pagination.limit;
-        this.hasNextPage = response.pagination.hasNextPage;
-        this.hasPreviousPage = response.pagination.hasPreviousPage;
+        console.log(response);
       },
       error: (error) => {
         console.error('Error al cargar productos:', error);
