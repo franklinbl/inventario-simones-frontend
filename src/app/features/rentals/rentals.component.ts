@@ -116,16 +116,14 @@ export class RentalsComponent implements OnInit {
     const dialogRef =  this.dialog.open(CompletedRentalComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
+      if (!result) return;
       const index = this.rentals.findIndex(r => r.id === result.id);
       if (index !== -1) {
-        // this.rentals[index] = { ...this.rentals[index], ...result };
         this.rentals[index].status = result.status,
         this.rentals[index].date_returned = result.date_returned,
         this.rentals[index].return_notes = result.return_notes,
         this.rentals[index].products = result.products
       }
-    console.log(this.rentals);
     });
   }
 
