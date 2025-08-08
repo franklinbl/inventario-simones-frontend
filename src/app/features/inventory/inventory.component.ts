@@ -14,6 +14,7 @@ import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/d
     CommonModule,
     MatDialogModule,
     FormsModule,
+
   ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss']
@@ -46,7 +47,7 @@ export class InventoryComponent implements OnInit {
 
   private loadProducts(page: number = 1): void {
     const currentlyDate = new Date().toISOString().split('T')[0];
-    this.inventoryService.getAvailableProducts(currentlyDate, currentlyDate).subscribe({
+    this.inventoryService.getAvailableProducts(currentlyDate, currentlyDate, this.searchQuery).subscribe({
       next: (response) => {
         this.products = response.products;
       },
@@ -139,6 +140,6 @@ export class InventoryComponent implements OnInit {
   }
 
   searchProduct() {
-    console.log(this.searchQuery);
+    this.loadProducts();
   }
 }
