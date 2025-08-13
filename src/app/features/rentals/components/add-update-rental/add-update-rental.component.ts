@@ -1,10 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { ProductAttributes } from '../../../inventory/models/product.model';
-import { map, Observable, startWith } from 'rxjs';
+import { debounceTime, map, Observable, startWith } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -15,6 +15,7 @@ import { InventoryService } from '../../../inventory/services/inventory.service'
 import { ClientsService } from '../../../clients/services/clients.service';
 import { RentalService } from '../../services/rental.service';
 import { RentalAttributes } from '../../models/rental.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-update-rental',
@@ -40,17 +41,18 @@ export class AddUpdateRentalComponent implements OnInit {
   private inventoryService = inject(InventoryService);
   private clientsService = inject(ClientsService);
   private rentalService = inject(RentalService);
+  private router = inject(Router);
+  @Input() private rentalId: number | null = null;
 
-  private oldRental: RentalAttributes = inject(MAT_DIALOG_DATA).rental;
-  modalTitle = inject(MAT_DIALOG_DATA).title;
-  readonly dialogRef = inject(MatDialogRef<AddUpdateRentalComponent>);
+  private oldRental: RentalAttributes | null= null;
+  modalTitle = '';
 
   rentalForm: FormGroup;
   clientForm: FormGroup;
   isEditing = false;
   isAdmin = false;
   clientDniInput = '';
-  productFilterCtrl = this.formBuilder.control('');
+  productFilterCtrl = this.formBuilder.control<string>('');
   selectedProductCtrl = this.formBuilder.control<ProductAttributes | null>(null);
   selectedProducts: { product: ProductAttributes; index: number }[] = [];
   filteredProducts: Observable<ProductAttributes[]> = this.productFilterCtrl.valueChanges.pipe(
@@ -109,76 +111,94 @@ export class AddUpdateRentalComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     this.isAdmin = user?.role.name === 'Administrador';
+
     this.loadProducts();
-
-    if (this.oldRental) {
-      this.isEditing = true;
-      this.currentRentalId = this.oldRental.id;
-
-      // Formatear las fechas al formato YYYY-MM-DD
-      const startDate = new Date(this.oldRental.start_date);
-      const endDate = new Date(this.oldRental.end_date);
-
-      this.rentalForm.patchValue({
-        client_id: this.oldRental.client.id,
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0],
-        notes: this.oldRental.notes,
-        status: this.oldRental.status,
-        is_delivery_by_us: this.oldRental.is_delivery_by_us || false,
-        delivery_price: this.oldRental.delivery_price || 0
-      });
-
-      this.clientForm.patchValue({
-        name: this.oldRental.client.name,
-        dni: this.oldRental.client.dni,
-        phone: this.oldRental.client.phone
-      });
-
-      // Manejar el estado disabled/enabled del delivery_price
-      const deliveryPriceControl = this.rentalForm.get('delivery_price');
-      if (this.oldRental.is_delivery_by_us) {
-        deliveryPriceControl?.enable();
-      } else {
-        deliveryPriceControl?.disable();
-      }
-
-      // Limpiar productos existentes
-      this.selectedProducts = [];
-      while (this.productsFormArray.length) {
-        this.productsFormArray.removeAt(0);
-      }
-
-      // Agregar productos del rental
-      this.oldRental.products.forEach(product => {
-        const index = this.productsFormArray.length;
-        const currentQuantity = product.rental_product?.quantity_rented || 0;
-        this.productsFormArray.push(this.formBuilder.group({
-          product_id: [product.id],
-          quantity_rented: [currentQuantity, [
-            Validators.required,
-            Validators.min(1),
-            this.maxStockValidator(product.available_quantity, currentQuantity)
-          ]]
-        }));
-        this.selectedProducts.push({ product, index });
-      });
+    if (this.rentalId) {
+      this.rentalService.getRentalForId(this.rentalId).subscribe({
+        next: (data) => {
+          this.oldRental = data.rental;
+          this.currentRentalId = data.rental.id;
+          this.isEditing = true;
+          this.loadEditRental();
+        },
+        error: (error) => {
+          console.error('Error al cargar productos:', error);
+        }
+      })
     }
   }
 
-  private loadProducts(): void {
-    this.inventoryService.getProducts().subscribe({
-      next: (data) => {
-        this.products = data.products;
-        this.filteredProducts = this.productFilterCtrl.valueChanges.pipe(
-          startWith(''),
-          map(value => this._filterProducts(value || ''))
-        );
-      },
-      error: (error) => {
-        console.error('Error al cargar productos:', error);
-      }
+  loadEditRental() {
+    if (!this.oldRental) return;
+    // Formatear las fechas al formato YYYY-MM-DD
+    const startDate = new Date(this.oldRental.start_date);
+    const endDate = new Date(this.oldRental.end_date);
+
+    this.rentalForm.patchValue({
+      client_id: this.oldRental.client?.id,
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0],
+      notes: this.oldRental.notes,
+      status: this.oldRental.status,
+      is_delivery_by_us: this.oldRental.is_delivery_by_us || false,
+      delivery_price: this.oldRental.delivery_price || 0
     });
+
+    this.clientForm.patchValue({
+      name: this.oldRental.client?.name,
+      dni: this.oldRental.client?.dni,
+      phone: this.oldRental.client?.phone
+    });
+
+    // Manejar el estado disabled/enabled del delivery_price
+    const deliveryPriceControl = this.rentalForm.get('delivery_price');
+    if (this.oldRental.is_delivery_by_us) {
+      deliveryPriceControl?.enable();
+    } else {
+      deliveryPriceControl?.disable();
+    }
+
+    // Limpiar productos existentes
+    this.selectedProducts = [];
+    while (this.productsFormArray.length) {
+      this.productsFormArray.removeAt(0);
+    }
+
+    // Agregar productos del rental
+    this.oldRental.products.forEach(product => {
+      const index = this.productsFormArray.length;
+      const currentQuantity = product.rental_product?.quantity_rented || 0;
+      this.productsFormArray.push(this.formBuilder.group({
+        product_id: [product.id],
+        quantity_rented: [currentQuantity, [
+          Validators.required,
+          Validators.min(1),
+          this.maxStockValidator(product.available_quantity, currentQuantity)
+        ]]
+      }));
+      this.selectedProducts.push({ product, index });
+    });
+  }
+
+  loadProducts(): void {
+    if (this.productFilterCtrl.value && this.productFilterCtrl.value?.trim() !== '' && this.productFilterCtrl.value?.length > 2) {
+      this.inventoryService.getAvailableProducts(
+        this.rentalForm.get('start_date')?.value,
+        this.rentalForm.get('end_date')?.value,
+        this.productFilterCtrl.value).subscribe({
+        next: (data) => {
+          this.products = data.products;
+          this.filteredProducts = this.productFilterCtrl.valueChanges.pipe(
+            startWith(''),
+            debounceTime(300),
+            map(value => this._filterProducts(value || ''))
+          );
+        },
+        error: (error) => {
+          console.error('Error al cargar productos:', error);
+        }
+      });
+    }
   }
 
   onSubmit() {
@@ -208,8 +228,8 @@ export class AddUpdateRentalComponent implements OnInit {
 
       if (this.isEditing && this.currentRentalId) {
           this.rentalService.updateRental(this.currentRentalId, rentalData, this.clientForm.value).subscribe({
-            next: (response) => {
-              this.closeModal(response.rental);
+            next: () => {
+              this.redirectToRentals();
             },
             error: (error) => {
               console.error('Error al actualizar renta:', error);
@@ -217,13 +237,13 @@ export class AddUpdateRentalComponent implements OnInit {
           });
       } else {
         this.rentalService.createRental(rentalData, this.clientForm.value).subscribe({
-          next: (response) => {
+          next: () => {
             this.clientForm.reset();
             this.clientDniInput = '';
             this.rentalForm.patchValue({
               client_id: null
             });
-            this.closeModal(response.rental);
+            this.redirectToRentals();
           },
           error: (error) => {
             console.error('Error al crear renta:', error);
@@ -233,8 +253,8 @@ export class AddUpdateRentalComponent implements OnInit {
     }
   }
 
-  closeModal(data?: RentalAttributes) {
-    this.dialogRef.close(data);
+  redirectToRentals() {
+    this.router.navigate(['/rentals'])
   }
 
   searchClient() {

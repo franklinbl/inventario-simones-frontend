@@ -27,7 +27,6 @@ export class AddUpdateProductComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       description: [''],
       total_quantity: [null, [Validators.required, Validators.min(0)]],
-      available_quantity: [null, [Validators.required, Validators.min(0)]],
       price: [null, [Validators.required, Validators.min(0)]]
     });
   }
@@ -42,7 +41,6 @@ export class AddUpdateProductComponent implements OnInit {
         name: this.oldProduct.name,
         description: this.oldProduct.description,
         total_quantity: this.oldProduct.total_quantity,
-        available_quantity: this.oldProduct.available_quantity,
         price: this.oldProduct.price,
       });
     }

@@ -16,6 +16,10 @@ export class RentalService {
     return this.http.get<RentalAttributes[]>(this.apiUrl);
   }
 
+  getRentalForId(rentalId: number): Observable<{message: string, rental: RentalAttributes}> {
+    return this.http.get<{message: string, rental: RentalAttributes}>(`${this.apiUrl}/${rentalId}`);
+  }
+
   createRental(rental: Omit<RentalAttributes, 'id'>, client: ClientAttributes): Observable<{message: string, rental: RentalAttributes}> {
     return this.http.post<{message: string,rental: RentalAttributes}>(this.apiUrl, {rental, client});
   }

@@ -14,8 +14,7 @@ export class DashboardComponent {
   private dashboardService = inject(DashboardService);
   infoDashboard: DashboardAttributes = {
     pendingRentals: 0,
-    monthlyEvents: 0,
-    lowStockProducts: 0
+    monthlyEvents: 0
   };
 
   ngOnInit(): void {

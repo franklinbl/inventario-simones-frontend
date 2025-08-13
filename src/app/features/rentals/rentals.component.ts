@@ -12,6 +12,7 @@ import { AddUpdateRentalComponent } from './components/add-update-rental/add-upd
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { CompletedRentalComponent } from './components/completed-rental/completed-rental.component';
 import { StatusRentalsPipe } from './pipes/status-rentals.pipe';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-rentals',
@@ -21,7 +22,8 @@ import { StatusRentalsPipe } from './pipes/status-rentals.pipe';
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
-    StatusRentalsPipe
+    StatusRentalsPipe,
+    RouterModule
   ],
   templateUrl: './rentals.component.html',
   styleUrls: ['./rentals.component.scss']
@@ -30,6 +32,7 @@ export class RentalsComponent implements OnInit {
   private rentalService = inject(RentalService);
   private authService = inject(AuthService);
   readonly dialog = inject(MatDialog);
+  readonly router = inject(Router);
 
   rentals: (RentalAttributes & { expanded?: boolean })[] = [];
   products: ProductAttributes[] = [];
@@ -61,30 +64,8 @@ export class RentalsComponent implements OnInit {
     rental.expanded = !rental.expanded;
   }
 
-  createEditRental (rental?: RentalAttributes | null) {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.enterAnimationDuration = 0;
-
-    const title = (!rental ? 'Nueva renta' : 'Actualizar renta')
-
-    dialogConfig.data = {
-      rental: rental || null,
-      title
-    };
-
-    const dialogRef =  this.dialog.open(AddUpdateRentalComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (!result) return;
-      if (!rental) {
-        this.rentals.unshift(result);
-      } else {
-        const index = this.rentals.findIndex(rental => rental.id === result.id);
-        if (index !== -1) {
-          this.rentals[index] = result;
-        }
-      }
-    });
+  editRental (rentalId?: number | null) {
+    this.router.navigate(['/rentals', rentalId]);
   }
 
   getStatusClass(status: string): string {

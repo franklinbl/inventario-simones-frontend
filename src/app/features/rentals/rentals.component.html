@@ -2,7 +2,7 @@
   <div class="header">
     <h2>Rentas</h2>
     @if (isAdmin) {
-      <button class="primary-button" (click)="createEditRental(null)">
+      <button class="primary-button" [routerLink]="['/rentals/new']">
         Nueva Renta
       </button>
     }
@@ -48,7 +48,7 @@
                       <h3>Productos Rentados</h3>
                       <div class="button-group">
                         @if (rental.status !== 'completed' && isAdmin) {
-                          <button class="secondary-button" (click)="createEditRental(rental)">
+                          <button class="secondary-button" (click)="editRental(rental.id)">
                             Editar
                           </button>
                         }

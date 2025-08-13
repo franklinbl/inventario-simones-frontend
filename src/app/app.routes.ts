@@ -27,7 +27,7 @@ export const routes: Routes = [
       },
       {
         path: 'rentals',
-        loadComponent: () => import('./features/rentals/rentals.component').then(m => m.RentalsComponent)
+        loadChildren: () => import('./features/rentals/rentals.routes').then(m => m.RENTALS_ROUTES)
       },
       {
         path: 'reports',

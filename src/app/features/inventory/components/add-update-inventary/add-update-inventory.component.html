@@ -75,23 +75,6 @@
                 </div>
               }
             </div>
-
-            <div class="form-group">
-              <label for="available_quantity">Cantidad Disponible</label>
-              <input
-                type="number"
-                id="available_quantity"
-                formControlName="available_quantity"
-                class="form-control"
-                placeholder="0"
-                [class.is-invalid]="productForm.get('available_quantity')?.invalid && productForm.get('available_quantity')?.touched"
-              >
-              @if (productForm.get('available_quantity')?.invalid && productForm.get('available_quantity')?.touched) {
-                <div class="error-message">
-                  {{ getErrorMessage('available_quantity') }}
-                </div>
-              }
-            </div>
           </div>
 
           <div class="form-group">

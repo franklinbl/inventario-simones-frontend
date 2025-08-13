@@ -19,6 +19,7 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
+*.code-workspace
 
 # Visual Studio Code
 .vscode/*
@@ -41,5 +42,3 @@ testem.log
 .DS_Store
 Thumbs.db
 .qodo
-
-inventario-simones.code-workspace
