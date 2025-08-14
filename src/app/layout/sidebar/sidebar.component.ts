@@ -33,12 +33,12 @@ export class SidebarComponent implements OnInit {
       route: '/inventory',
       permissions: ['Administrador', 'Empleado']
     },
-    {
-      name: 'Reportes',
-      icon: '📈',
-      route: '/reports',
-      permissions: ['Administrador']
-    },
+    // {
+    //   name: 'Reportes',
+    //   icon: '📈',
+    //   route: '/reports',
+    //   permissions: ['Administrador']
+    // },
     {
       name: 'Clientes',
       icon: '👥',
