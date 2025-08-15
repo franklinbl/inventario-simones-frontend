@@ -2,9 +2,7 @@
   <div class="header">
     <h2>Rentas</h2>
     @if (isAdmin) {
-      <button class="primary-button" [routerLink]="['/rentals/new']">
-        Nueva Renta
-      </button>
+      <app-button type="primary" size="sm" [routerLink]="['/rentals/new']">Nueva Renta</app-button>
     }
   </div>
   <div class="table-responsive">

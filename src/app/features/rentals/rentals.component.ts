@@ -13,6 +13,7 @@ import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/d
 import { CompletedRentalComponent } from './components/completed-rental/completed-rental.component';
 import { StatusRentalsPipe } from './pipes/status-rentals.pipe';
 import { Router, RouterModule } from '@angular/router';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-rentals',
@@ -23,7 +24,8 @@ import { Router, RouterModule } from '@angular/router';
     MatButtonModule,
     MatDialogModule,
     StatusRentalsPipe,
-    RouterModule
+    RouterModule,
+    ButtonComponent
   ],
   templateUrl: './rentals.component.html',
   styleUrls: ['./rentals.component.scss']
