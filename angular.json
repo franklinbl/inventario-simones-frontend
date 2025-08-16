@@ -29,6 +29,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*.svg",
+                "input": "src/assets/icons",
+                "output": "/assets/icons"
               }
             ],
             "styles": [
@@ -96,6 +101,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*.svg",
+                "input": "src/assets/icons",
+                "output": "/assets/icons"
               }
             ],
             "styles": [

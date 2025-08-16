@@ -1,37 +1,44 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
-  <div class="sidebar-header">
-    @if (!isCollapsed) {
-      <h2>Simones</h2>
-    }
-    <button class="toggle-btn" (click)="toggleSidebar()">
-      {{ isCollapsed ? '→' : '←' }}
-    </button>
-  </div>
+  <div>
+    <!-- Logo y título -->
+    <div class="container-logo">
+      <div class="container-icon">
+        <mat-icon class="icon" [svgIcon]="'sparkles'"></mat-icon>
+      </div>
+      <div class="title">
+        <h3>Festivity Hub</h3>
+        <p>Sistema de Inventario</p>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        @if(isCollapsed) {<mat-icon class="icon" [svgIcon]="'panel-right-close'"></mat-icon>}
+        @else {<mat-icon class="icon" [svgIcon]="'panel-right-open'"></mat-icon>}
+      </button>
+    </div>
 
-  <nav class="sidebar-nav">
-    @for (item of menuItems; track item.route) {
-      @if (user && user.role && user.role.name) {
-        @if (item.permissions.includes(user.role.name)) {
-          <a routerLink="{{ item.route }}" routerLinkActive="active" class="nav-item">
-            <span class="icon">{{ item.icon }}</span>
-            @if (!isCollapsed) {
-              <span>{{ item.name }}</span>
-            }
-          </a>
+    <!-- Navegación -->
+    <div class="navigation">
+      <h4 class="nav-title">NAVEGACIÓN</h4>
+      <ul class="menu-list">
+        @for (item of menuItems; track item.route) {
+          <li>
+            <a routerLink="{{ item.route }}" routerLinkActive="active" class="menu-item">
+              <mat-icon [svgIcon]="item.icon"></mat-icon>
+              <span class="label">{{ item.name }}</span>
+            </a>
+          </li>
         }
-      }
-    }
-  </nav>
+      </ul>
+    </div>
+  </div>
 
   <div class="sidebar-footer">
     <div>
-      <p style="text-align: center;">👋🏼 Hola, {{ user?.name }}</p>
+      <p style="text-align: center; margin-bottom: 10px;">Usuario: {{ user?.name }}</p>
     </div>
+
     <button class="nav-item logout-btn" (click)="logout()">
-      <span class="icon">🚪</span>
-      @if (!isCollapsed) {
-        <span>Cerrar Sesión</span>
-      }
+      <mat-icon class="icon" [svgIcon]="'log-out'"></mat-icon>
+      <span class="label-log-out">Cerrar Sesión</span>
     </button>
   </div>
 </aside>
