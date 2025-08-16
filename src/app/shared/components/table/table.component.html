@@ -1,0 +1,40 @@
+<div class="p-6 bg-[#fff] border-2 border-[#E9EAE8] rounded-lg">
+  <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200 bg-white">
+    <table class="w-full text-sm text-left text-gray-600">
+      <thead class="text-gray-500 text-xs uppercase bg-gray-50">
+        <tr>
+          <th *ngFor="let col of columns" class="px-4 py-3">
+            {{ col.label }}
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let row of data" class="hover:bg-gray-50">
+          <td *ngFor="let col of columns" class="px-4 py-3 font-medium text-gray-700">
+
+            <!-- Render dinámico según tipo -->
+            <ng-container [ngSwitch]="col.type">
+
+              <!-- Texto -->
+              <span *ngSwitchCase="'text'">{{ row[col.key] }}</span>
+
+              <!-- Fecha -->
+              <span *ngSwitchCase="'date'">{{ row[col.key] | date:'dd/MM/yyyy' }}</span>
+
+              <!-- Acciones -->
+              <button *ngSwitchCase="'action'" class="cursor-pointer"
+                      (click)="action.emit({type: col.key, row})">
+                <mat-icon class="icon" [svgIcon]="col.key"></mat-icon>
+              </button>
+
+              <!-- Default -->
+              <span *ngSwitchDefault>{{ row[col.key] }}</span>
+            </ng-container>
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

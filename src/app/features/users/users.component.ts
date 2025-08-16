@@ -7,11 +7,13 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
+import { TableComponent } from '../../shared/components/table/table.component';
+import { TableColumn } from '../../shared/components/table/models/table.model';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonComponent, MatIcon],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonComponent, MatIcon, TableComponent],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })
@@ -24,6 +26,15 @@ export class UsersComponent implements OnInit {
   isModalOpen = false;
   modalTitle = 'Nuevo Usuario';
   userForm: FormGroup;
+
+  columns: TableColumn[] = [
+    { key: 'name', label: 'Nombre', type: 'text' },
+    { key: 'username', label: 'Usuario', type: 'text' },
+    { key: 'role.name', label: 'Rol', type: 'text' },   // Para objetos anidados puedes hacer un pipe custom
+    { key: 'createdAt', label: 'Fecha de Creación', type: 'date' },
+    { key: 'updatedAt', label: 'Última Actualización', type: 'date' },
+    { key: 'square-pen', label: 'Acciones', type: 'action' }
+  ];
 
   constructor(
     private userService: UserService,

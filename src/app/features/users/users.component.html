@@ -20,39 +20,7 @@
         </div>
       </div>
     } @else {
-      <div class="p-6 bg-[#fff] border-2 border-[#E9EAE8] rounded-lg">
-        <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200 bg-white">
-          <table class="w-full text-sm text-left text-gray-600">
-            <thead class="text-gray-500 text-xs uppercase bg-gray-50">
-              <tr>
-                <th scope="col" class="px-4 py-3">Nombre</th>
-                <th scope="col" class="px-4 py-3">Usuario</th>
-                <th scope="col" class="px-4 py-3">Rol</th>
-                <th scope="col" class="px-4 py-3">Fecha de Creación</th>
-                <th scope="col" class="px-4 py-3">Última Actualización</th>
-                <th scope="col" class="px-4 py-3">Acciones</th>
-              </tr>
-            </thead>
-
-            <tbody class="divide-y divide-gray-100">
-              @for (user of users; track user.id) {
-                <tr class="hover:bg-gray-50">
-                  <td class="px-4 py-3 font-medium text-gray-700">{{ user.name }}</td>
-                  <td class="px-4 py-3 font-medium text-gray-700">{{ user.username }}</td>
-                  <td class="px-4 py-3 font-medium text-gray-700">{{ user.role.name }}</td>
-                  <td class="px-4 py-3 font-medium text-gray-700">{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
-                  <td class="px-4 py-3 font-medium text-gray-700">{{ user.updatedAt | date:'dd/MM/yyyy' }}</td>
-                  <td class="px-4 py-3 font-medium text-gray-700">
-                    <button class="cursor-pointer">
-                      <mat-icon class="icon" [svgIcon]="'square-pen'"></mat-icon>
-                    </button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <app-table [columns]="columns" [data]="users" ></app-table>
     }
   </div>
 
