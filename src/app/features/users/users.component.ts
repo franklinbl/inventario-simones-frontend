@@ -1,19 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { UserService, User } from '../../services/user.service';
 import { finalize } from 'rxjs';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonComponent, MatIcon],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
+  matIconRegistry = inject(MatIconRegistry)
+  domSanitizer = inject(DomSanitizer)
   users: User[] = [];
   isLoading = false;
   errorMessage = '';
@@ -35,6 +39,16 @@ export class UsersComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+
+    const iconFolder = '/assets/icons/';
+    const icons = ['square-pen'];
+
+    icons.forEach(icon => {
+      this.matIconRegistry.addSvgIcon(
+        icon,
+        this.domSanitizer.bypassSecurityTrustResourceUrl(iconFolder + icon + '.svg')
+      );
+    });
   }
 
   loadUsers(): void {
