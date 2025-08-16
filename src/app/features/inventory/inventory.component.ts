@@ -6,6 +6,7 @@ import { ProductAttributes } from './models/product.model';
 import { AuthService } from '../../services/auth.service';
 import { AddUpdateProductComponent } from './components/add-update-inventary/add-update-inventory.component';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-inventory',
@@ -14,7 +15,7 @@ import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/d
     CommonModule,
     MatDialogModule,
     FormsModule,
-
+    ButtonComponent
   ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss']

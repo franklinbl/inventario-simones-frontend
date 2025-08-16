@@ -14,15 +14,13 @@ export class ButtonComponent implements OnInit {
   @Input() size: ButtonSize = 'md';
   @Input() disabled = false;
 
-  ngOnInit() {
-    console.log('Tamaño:', this.size); // ✅ Debería mostrar "sm"
-  }
+  ngOnInit() {}
 
   get classes(): string {
-    const base = 'inline-block rounded-sm border border-indigo-600 bg-indigo-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:ring-3 focus:outline-hidden cursor-pointer';
+    const base = 'inline-block rounded-lg text font-medium focus:outline-hidden cursor-pointer flex items-center';
 
     const types = {
-      primary: 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500',
+      primary: 'bg-[#5A6C96] text-white ',
       secondary: 'bg-gray-600 hover:bg-gray-700 text-white focus:ring-gray-500',
       danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
       success: 'bg-green-600 hover:bg-green-700 text-white focus:ring-green-500'
@@ -30,8 +28,8 @@ export class ButtonComponent implements OnInit {
 
     const sizes = {
       sm: 'text-xs px-4 py-1 rounded border',
-      md: 'text-sm px-6 py-2 rounded-sm',
-      lg: 'text-base px-8 py-3 rounded'
+      md: 'text-sm px-8 py-2 rounded-lg',
+      lg: 'text-base px-12 py-6 rounded-2xl'
     };
 
     const disabled = this.disabled

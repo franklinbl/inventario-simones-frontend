@@ -1,8 +1,11 @@
 <div class="container">
   <div class="header">
-    <h2>Rentas</h2>
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Rentas</h1>
+      <p class="text-base text-gray-500 mb-6">Gestiona todas las rentas de equipos y mobiliario</p>
+    </div>
     @if (isAdmin) {
-      <app-button type="primary" size="sm" [routerLink]="['/rentals/new']">Nueva Renta</app-button>
+      <app-button type="primary" size="md" [routerLink]="['/rentals/new']">Nueva Renta</app-button>
     }
   </div>
   <div class="table-responsive">

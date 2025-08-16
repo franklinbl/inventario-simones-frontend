@@ -1,9 +1,10 @@
 <div class="users-container">
   <div class="header">
-    <h1>Gestión de Usuarios</h1>
-    <button class="primary-button" (click)="openModal()">
-      Nuevo Usuario
-    </button>
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Usuarios del Sistema</h1>
+      <p class="text-base text-gray-500 mb-6">Gestiona los usuarios y sus permisos de acceso</p>
+    </div>
+    <app-button type="primary" size="md" (click)="openModal()">Nueva Usuario</app-button>
   </div>
   <div>
     @if (isLoading) {

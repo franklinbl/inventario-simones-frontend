@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { UserService, User } from '../../services/user.service';
 import { finalize } from 'rxjs';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonComponent],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })
