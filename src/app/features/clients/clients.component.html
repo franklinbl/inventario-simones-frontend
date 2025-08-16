@@ -5,32 +5,21 @@
       <p class="text-base text-gray-500 mb-6">Gestiona la base de datos de todos tus clientes</p>
     </div>
   </div>
-  <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Cédula</th>
-          <th>Teléfono</th>
-          <th>Total de rentas</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (client of clients; track $index) {
-        <tr>
-          <td>{{ client.name }}</td>
-          <td>{{ client.dni }}</td>
-          <td>{{ client.phone }}</td>
-          <td>{{ client.rentalCount }}</td>
-          <td>
-            <button class="secondary-button" (click)="updateClient(client)">
-              Editar
-            </button>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
+  <div>
+    @if (isLoading) {
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    } @else if (clients.length === 0) {
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">No hay resultados</span>
+        </div>
+      </div>
+    } @else {
+      <app-table [columns]="columns" [data]="clients" (action)="updateClient($event)"></app-table>
+    }
   </div>
 </div>

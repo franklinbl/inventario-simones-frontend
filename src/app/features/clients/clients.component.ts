@@ -2,14 +2,15 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ClientsService } from './services/clients.service';
 import { CommonModule } from '@angular/common';
 import { ClientAttributes } from './Models/client.model';
-import { DialogConfig } from '@angular/cdk/dialog';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { EditClientComponent } from './components/edit-client/edit-client.component';
+import { TableColumn } from '../../shared/components/table/models/table.model';
+import { TableComponent } from '../../shared/components/table/table.component';
 
 @Component({
   selector: 'app-clients',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TableComponent],
   templateUrl: './clients.component.html',
   styleUrls: ['./clients.component.scss']
 })
@@ -18,6 +19,14 @@ export class ClientsComponent implements OnInit {
   readonly dialog = inject(MatDialog);
 
   clients: ClientAttributes[] = [];
+  isLoading = false;
+  columns: TableColumn[] = [
+    { key: 'name', label: 'Nombre', type: 'text' },
+    { key: 'dni', label: 'Cédula', type: 'text' },
+    { key: 'phone', label: 'Teléfono', type: 'text' },
+    { key: 'rentalCount', label: 'Total de rentas', type: 'text' },
+    { key: 'square-pen', label: 'Acciones', type: 'action' }
+  ];
 
   ngOnInit(): void {
     this.clientsService.getClients().subscribe((clients: ClientAttributes[]) => {
@@ -25,7 +34,7 @@ export class ClientsComponent implements OnInit {
     });
   }
 
-  updateClient(client: any) {
+  updateClient(client: ClientAttributes) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.enterAnimationDuration = 0;
 

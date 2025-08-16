@@ -24,7 +24,7 @@
 
               <!-- Acciones -->
               <button *ngSwitchCase="'action'" class="cursor-pointer"
-                      (click)="action.emit({type: col.key, row})">
+                      (click)="action.emit(row)">
                 <mat-icon class="icon" [svgIcon]="col.key"></mat-icon>
               </button>
 

@@ -18,7 +18,7 @@ export class TableComponent implements OnInit {
   @Input() data: any[] = [];
 
   // Evento para cuando se haga click en acción
-  @Output() action = new EventEmitter<{type: string, row: any}>();
+  @Output() action = new EventEmitter<any>();
 
   ngOnInit() {
     const iconFolder = '/assets/icons/';
