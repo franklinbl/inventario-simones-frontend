@@ -17,22 +17,35 @@
             <ng-container [ngSwitch]="col.type">
 
               <!-- Texto -->
-              <span *ngSwitchCase="'text'">{{ row[col.key] }}</span>
+              <span *ngSwitchCase="'text'">{{ getNestedValue(row, col.key) || '-' }}</span>
 
               <!-- Fecha -->
-              <span *ngSwitchCase="'date'">{{ row[col.key] | date:'dd/MM/yyyy' }}</span>
+              <span *ngSwitchCase="'date'">{{ (getNestedValue(row, col.key) | date:'dd/MM/yyyy') || '-' }}</span>
 
               <!-- Modena -->
-              <span *ngSwitchCase="'currency'">{{ row[col.key] | currency }}</span>
+              <span *ngSwitchCase="'currency'">{{ (getNestedValue(row, col.key) | currency) || '-' }}</span>
+
+              <!-- Rental Status -->
+              <span *ngSwitchCase="'rentalStatus'">{{ (getNestedValue(row, col.key) | statusRentals) || '-' }}</span>
 
               <!-- Acciones -->
-              <button *ngSwitchCase="'action'" class="cursor-pointer"
+              <!-- <button *ngSwitchCase="'action'" class="cursor-pointer"
                       (click)="action.emit(row)">
                 <mat-icon class="icon" [svgIcon]="col.key"></mat-icon>
-              </button>
+              </button> -->
+              <div *ngSwitchCase="'action'" class="flex gap-2">
+                <button *ngFor="let act of col.actions"
+                        class="cursor-pointer"
+                        [disabled]="act.disabled ? act.disabled(row) : false"
+                        (click)="onActionClick(act, row)"
+                        matTooltip="{{ act.tooltip || '' }}"
+                        matTooltipPosition="above">
+                  <mat-icon class="icon" [svgIcon]="act.icon"></mat-icon>
+                </button>
+              </div>
 
               <!-- Default -->
-              <span *ngSwitchDefault>{{ row[col.key] }}</span>
+              <span *ngSwitchDefault>{{ getNestedValue(row, col.key) }}</span>
             </ng-container>
 
           </td>

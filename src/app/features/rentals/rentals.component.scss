@@ -2,6 +2,13 @@
   padding: 20px;
 }
 
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
 .header {
   display: flex;
   justify-content: space-between;

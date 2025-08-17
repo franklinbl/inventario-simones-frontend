@@ -7,13 +7,13 @@ import { RentalService } from './services/rental.service';
 import { RentalAttributes } from './models/rental.model';
 import { ProductAttributes } from '../inventory/models/product.model';
 import { AuthService } from '../../services/auth.service';
-
-import { AddUpdateRentalComponent } from './components/add-update-rental/add-update-rental.component';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { CompletedRentalComponent } from './components/completed-rental/completed-rental.component';
 import { StatusRentalsPipe } from './pipes/status-rentals.pipe';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { TableColumn } from '../../shared/components/table/models/table.model';
+import { TableComponent } from '../../shared/components/table/table.component';
 
 @Component({
   selector: 'app-rentals',
@@ -23,7 +23,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
-    StatusRentalsPipe,
+    TableComponent,
     RouterModule,
     ButtonComponent
   ],
@@ -40,8 +40,36 @@ export class RentalsComponent implements OnInit {
   products: ProductAttributes[] = [];
   selectedProducts: { product: ProductAttributes; index: number }[] = [];
   isAdmin = false;
+  isLoading = false;
 
   customInputValue: string = '';
+
+  columns: TableColumn[] = [
+    { key: 'client.name', label: 'Cliente', type: 'text' },
+    { key: 'client.phone', label: 'Teléfono', type: 'text' },
+    { key: 'start_date', label: 'fecha de renta', type: 'date' },
+    { key: 'end_date', label: 'Fecha de devolución', type: 'date' },
+    { key: 'delivery_price', label: 'Flete', type: 'currency' },
+    { key: 'status', label: 'Estado', type: 'rentalStatus' },
+    { key: 'creator.name', label: 'Creado por', type: 'text' },
+    {
+      key: 'actions',
+      label: 'Acciones',
+      type: 'action',
+      actions: [
+        {
+          icon: 'eye',
+          tooltip: 'Ver detalle',
+          onClick: (row) => this.editRental(row.id)
+        },
+        {
+          icon: 'download',
+          tooltip: 'Descargar factura',
+          onClick: (row) => this.downloadInvoice(row)
+        }
+      ]
+    }
+  ];
 
   constructor() {}
 
