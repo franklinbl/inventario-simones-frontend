@@ -8,10 +8,10 @@
         <mat-form-field class="status-select">
           <mat-select formControlName="status" placeholder="Seleccionar un estado">
             <mat-option value="with_issues">
-              <mat-icon style="color: rgb(186, 186, 14)">warning</mat-icon>Con problemas
+              <mat-icon class="icon" [svgIcon]="'triangle-alert'"></mat-icon>Con problemas
             </mat-option>
             <mat-option value="completed">
-              <mat-icon style="color: rgb(31, 130, 31);">check_circle</mat-icon>Completada
+              <mat-icon class="icon" [svgIcon]="'circle-check'"></mat-icon>Completada
             </mat-option>
           </mat-select>
         </mat-form-field>

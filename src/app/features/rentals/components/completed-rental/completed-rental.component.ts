@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { RentalAttributes } from '../../models/rental.model';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { ProductAttributes } from '../../../inventory/models/product.model';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { RentalService } from '../../services/rental.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-completed-rental',
@@ -16,12 +17,15 @@ import { RentalService } from '../../services/rental.service';
     MatIconModule,
     MatFormFieldModule,
     MatSelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatIconModule
   ],
   templateUrl: './completed-rental.component.html',
   styleUrls: ['./completed-rental.component.scss']
 })
 export class CompletedRentalComponent implements OnInit {
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
   private formBuilder = inject(FormBuilder);
   private rentalService = inject(RentalService);
   private rental: RentalAttributes = inject(MAT_DIALOG_DATA).rental;
@@ -42,7 +46,6 @@ export class CompletedRentalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.rental);
     const date_returned = new Date(this.rental.date_returned);
     this.rentalForm.patchValue({
       id: this.rental.id,
@@ -64,6 +67,16 @@ export class CompletedRentalComponent implements OnInit {
         ]]
       }));
       this.selectedProducts.push({ product, index });
+    });
+
+    const iconFolder = '/assets/icons/';
+    const icons = ['triangle-alert', 'circle-check'];
+
+    icons.forEach(icon => {
+      this.matIconRegistry.addSvgIcon(
+        icon,
+        this.domSanitizer.bypassSecurityTrustResourceUrl(iconFolder + icon + '.svg')
+      );
     });
   }
 

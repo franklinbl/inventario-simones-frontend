@@ -24,7 +24,7 @@ export class TableComponent implements OnInit {
 
   ngOnInit() {
     const iconFolder = '/assets/icons/';
-    const icons = ['square-pen', 'eye', 'download'];
+    const icons = ['square-pen', 'eye', 'download', 'calendar-check'];
 
     icons.forEach(icon => {
       this.matIconRegistry.addSvgIcon(
@@ -45,4 +45,15 @@ export class TableComponent implements OnInit {
   getNestedValue(row: any, key: string): any {
     return key.split('.').reduce((acc, part) => acc && acc[part], row);
   }
+
+  statusClasses: Record<string, string> = {
+    pending_return: 'bg-yellow-100 text-yellow-800 border border-yellow-300',
+    completed: 'bg-green-100 text-green-800 border border-green-300',
+    with_issues: 'bg-orange-100 text-orange-800 border border-orange-300'
+  };
+
+  getStatusClasses(status: string): string {
+    return this.statusClasses[status] || 'bg-blue-100 text-blue-800 border border-blue-300';
+  }
+
 }
