@@ -27,7 +27,18 @@ export class ClientsComponent implements OnInit {
     { key: 'dni', label: 'Cédula', type: 'text' },
     { key: 'phone', label: 'Teléfono', type: 'text' },
     { key: 'rentalCount', label: 'Total de rentas', type: 'text' },
-    { key: 'square-pen', label: 'Acciones', type: 'action' }
+    {
+      key: 'actions',
+      label: 'Acciones',
+      type: 'action',
+      actions: [
+        {
+          icon: 'square-pen',
+          tooltip: 'Editar',
+          onClick: (row) => this.updateClient(row.id)
+        }
+      ]
+    }
   ];
 
   ngOnInit(): void {

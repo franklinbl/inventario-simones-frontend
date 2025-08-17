@@ -49,7 +49,18 @@ export class InventoryComponent implements OnInit {
     { key: 'price', label: 'Precio', type: 'currency' },
     { key: 'available_quantity', label: 'Cantidad Disponible', type: 'text' },
     { key: 'total_quantity', label: 'Cantidad Total', type: 'text' },
-    { key: 'square-pen', label: 'Acciones', type: 'action' }
+    {
+      key: 'actions',
+      label: 'Acciones',
+      type: 'action',
+      actions: [
+        {
+          icon: 'square-pen',
+          tooltip: 'Editar',
+          onClick: (row) => this.createEditProduct(row.id)
+        }
+      ]
+    }
   ];
 
   constructor() {

@@ -30,7 +30,18 @@ export class UsersComponent implements OnInit {
     { key: 'role.name', label: 'Rol', type: 'text' },
     { key: 'createdAt', label: 'Fecha de Creación', type: 'date' },
     { key: 'updatedAt', label: 'Última Actualización', type: 'date' },
-    { key: 'square-pen', label: 'Acciones', type: 'action' }
+    // {
+    //   key: 'actions',
+    //   label: 'Acciones',
+    //   type: 'action',
+    //   actions: [
+    //     {
+    //       icon: 'square-pen',
+    //       tooltip: 'Editar',
+    //       onClick: (row) => this.openModal()
+    //     }
+    //   ]
+    // }
   ];
 
   constructor(
