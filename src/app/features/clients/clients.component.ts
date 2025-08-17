@@ -6,6 +6,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { EditClientComponent } from './components/edit-client/edit-client.component';
 import { TableColumn } from '../../shared/components/table/models/table.model';
 import { TableComponent } from '../../shared/components/table/table.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-clients',
@@ -20,6 +21,7 @@ export class ClientsComponent implements OnInit {
 
   clients: ClientAttributes[] = [];
   isLoading = false;
+  errorMessage = '';
   columns: TableColumn[] = [
     { key: 'name', label: 'Nombre', type: 'text' },
     { key: 'dni', label: 'Cédula', type: 'text' },
@@ -29,9 +31,19 @@ export class ClientsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.clientsService.getClients().subscribe((clients: ClientAttributes[]) => {
-      this.clients = clients;
-    });
+    this.clientsService.getClients()
+      .pipe(
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe({
+        next: (clients) => {
+          this.clients = clients;
+        },
+        error: (error) => {
+          console.error('Error loading users:', error);
+          this.errorMessage = 'Error al cargar los Clientes';
+        }
+      });
   }
 
   updateClient(client: ClientAttributes) {

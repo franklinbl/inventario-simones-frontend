@@ -4,6 +4,13 @@
   padding: $spacing-lg;
 }
 
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
 .content {
   background-color: $surface-color;
   padding: $spacing-lg;

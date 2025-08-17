@@ -22,6 +22,9 @@
               <!-- Fecha -->
               <span *ngSwitchCase="'date'">{{ row[col.key] | date:'dd/MM/yyyy' }}</span>
 
+              <!-- Modena -->
+              <span *ngSwitchCase="'currency'">{{ row[col.key] | currency }}</span>
+
               <!-- Acciones -->
               <button *ngSwitchCase="'action'" class="cursor-pointer"
                       (click)="action.emit(row)">
