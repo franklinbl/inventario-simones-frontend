@@ -11,9 +11,9 @@
 
   <div class="search-container">
     <input class="form-control" type="text" placeholder="Buscar producto" [(ngModel)]="searchQuery">
-    <button class="primary-button search-button" (click)="searchProduct()">
-      Buscar producto
-    </button>
+    <div class="container-search-button">
+      <app-button type="secondary" size="md" (click)="searchProduct()">Buscar producto</app-button>
+    </div>
   </div>
 
   <div class="mt-5">

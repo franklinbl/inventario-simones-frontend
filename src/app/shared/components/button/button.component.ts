@@ -21,7 +21,7 @@ export class ButtonComponent implements OnInit {
 
     const types = {
       primary: 'bg-[#5A6C96] text-white ',
-      secondary: 'bg-gray-600 hover:bg-gray-700 text-white focus:ring-gray-500',
+      secondary: 'bg-[#E2E9B4] text-black',
       danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
       success: 'bg-green-600 hover:bg-green-700 text-white focus:ring-green-500'
     };

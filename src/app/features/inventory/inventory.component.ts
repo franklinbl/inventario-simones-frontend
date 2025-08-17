@@ -57,7 +57,7 @@ export class InventoryComponent implements OnInit {
         {
           icon: 'square-pen',
           tooltip: 'Editar',
-          onClick: (row) => this.createEditProduct(row.id)
+          onClick: (row) => this.createEditProduct(row)
         }
       ]
     }
