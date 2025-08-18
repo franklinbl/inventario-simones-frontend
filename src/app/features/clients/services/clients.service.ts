@@ -4,6 +4,15 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ClientAttributes } from '../Models/client.model';
 
+interface Pagination {
+  currentPage: number,
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  limit: number,
+  total: number,
+  totalPages: number
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,8 +21,8 @@ export class ClientsService {
 
   constructor(private http: HttpClient) {}
 
-  getClients(): Observable<ClientAttributes[]> {
-    return this.http.get<ClientAttributes[]>(`${this.API_URL}`);
+  getClients(): Observable<{message: string, clients: ClientAttributes[], pagination: Pagination}> {
+    return this.http.get<{message: string, clients: ClientAttributes[], pagination: Pagination}>(`${this.API_URL}`);
   }
 
   getClientByDni(dni: string): Observable<ClientAttributes> {

@@ -70,7 +70,7 @@ export class UsersComponent implements OnInit {
       )
       .subscribe({
         next: (users) => {
-          this.users = users;
+          this.users = users.users;
         },
         error: (error) => {
           console.error('Error loading users:', error);

@@ -22,6 +22,15 @@ export interface CreateUserDto {
   role_id: number;
 }
 
+interface Pagination {
+  currentPage: number,
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  limit: number,
+  total: number,
+  totalPages: number
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,8 +39,8 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.API_URL}/users`);
+  getUsers(): Observable<{message: string, users: User[], pagination: Pagination}> {
+    return this.http.get<{message: string, users: User[], pagination: Pagination}>(`${this.API_URL}/users`);
   }
 
   createUser(userData: CreateUserDto): Observable<User> {

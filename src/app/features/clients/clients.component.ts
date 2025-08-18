@@ -48,7 +48,7 @@ export class ClientsComponent implements OnInit {
       )
       .subscribe({
         next: (clients) => {
-          this.clients = clients;
+          this.clients = clients.clients;
         },
         error: (error) => {
           console.error('Error loading users:', error);
