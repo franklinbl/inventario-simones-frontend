@@ -24,6 +24,11 @@
     }
   </div>
 
+  <app-pagination
+    [pagination]="pagination"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
+
 
 <!-- Modal -->
 @if (isModalOpen) {

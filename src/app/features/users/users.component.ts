@@ -5,14 +5,22 @@ import { UserService, User } from '../../services/user.service';
 import { finalize } from 'rxjs';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { DomSanitizer } from '@angular/platform-browser';
 import { TableComponent } from '../../shared/components/table/table.component';
 import { TableColumn } from '../../shared/components/table/models/table.model';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { Pagination } from '../../shared/interfaces/Pagination.interface';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, ButtonComponent, TableComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    ButtonComponent,
+    TableComponent,
+    PaginationComponent
+  ],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })
@@ -23,6 +31,7 @@ export class UsersComponent implements OnInit {
   isModalOpen = false;
   modalTitle = 'Nuevo Usuario';
   userForm: FormGroup;
+  pagination!: Pagination;
 
   columns: TableColumn[] = [
     { key: 'name', label: 'Nombre', type: 'text' },
@@ -60,17 +69,18 @@ export class UsersComponent implements OnInit {
     this.loadUsers();
   }
 
-  loadUsers(): void {
+  loadUsers(page: number = 1): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.userService.getUsers()
+    this.userService.getUsers({page})
       .pipe(
         finalize(() => this.isLoading = false)
       )
       .subscribe({
-        next: (users) => {
-          this.users = users.users;
+        next: (response) => {
+          this.users = response.users;
+          this.pagination = response.pagination;
         },
         error: (error) => {
           console.error('Error loading users:', error);
@@ -120,5 +130,9 @@ export class UsersComponent implements OnInit {
       return `Mínimo ${control.getError('minlength').requiredLength} caracteres`;
     }
     return '';
+  }
+
+  onPageChange(page: number) {
+    this.loadUsers(page);
   }
 }
