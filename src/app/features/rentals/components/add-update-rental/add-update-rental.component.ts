@@ -6,7 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ProductAttributes } from '../../../inventory/models/product.model';
 import { debounceTime, map, Observable, startWith } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
+import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -16,6 +16,7 @@ import { ClientsService } from '../../../clients/services/clients.service';
 import { RentalService } from '../../services/rental.service';
 import { RentalAttributes } from '../../models/rental.model';
 import { Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-add-update-rental',
@@ -36,6 +37,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./add-update-rental.component.scss']
 })
 export class AddUpdateRentalComponent implements OnInit {
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
   private inventoryService = inject(InventoryService);
@@ -109,10 +112,19 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const iconFolder = '/assets/icons/';
+    const icons = ['arrow-left-to-line'];
+
+    icons.forEach(icon => {
+      this.matIconRegistry.addSvgIcon(
+        icon,
+        this.domSanitizer.bypassSecurityTrustResourceUrl(iconFolder + icon + '.svg')
+      );
+    });
+
     const user = this.authService.getCurrentUser();
     this.isAdmin = user?.role.name === 'Administrador';
 
-    this.loadProducts();
     if (this.rentalId) {
       this.rentalService.getRentalForId(this.rentalId).subscribe({
         next: (data) => {
@@ -254,7 +266,12 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   redirectToRentals() {
-    this.router.navigate(['/rentals'])
+    const state = history.state as { page?: number; pageSize?: number };
+    this.router.navigate(['/rentals'], {
+      state: {
+        page: state?.page || 1,
+      }
+    });
   }
 
   searchClient() {

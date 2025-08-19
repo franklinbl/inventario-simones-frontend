@@ -1,10 +1,13 @@
 
 <div class="main-container">
-  @if (isEditing) {
-    <h2 style="margin-bottom: 20px;">Editar renta</h2>
-  } @else {
-    <h2 style="margin-bottom: 20px;">Registrar nueva renta</h2>
-  }
+  <div class="flex items-center mb-4">
+    <mat-icon class="icon mr-2 cursor-pointer" [svgIcon]="'arrow-left-to-line'" (click)="redirectToRentals()"></mat-icon>
+    @if (isEditing) {
+      <h2>Editar renta</h2>
+    } @else {
+      <h2>Registrar nueva renta</h2>
+    }
+  </div>
 
   <div class="form-container">
     <div class="user-data">

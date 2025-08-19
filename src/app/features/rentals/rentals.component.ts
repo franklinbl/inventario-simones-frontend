@@ -85,7 +85,8 @@ export class RentalsComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     this.isAdmin = user?.role.name === 'Administrador';
-    this.loadRentals();
+    const statePagination = history.state as { page?: number;};
+    this.loadRentals(statePagination.page);
   }
 
   private loadRentals(page: number = 1): void {
@@ -105,7 +106,11 @@ export class RentalsComponent implements OnInit {
   }
 
   editRental (rentalId?: number | null) {
-    this.router.navigate(['/rentals', rentalId]);
+    this.router.navigate(['/rentals', rentalId], {
+      state: {
+        page: this.pagination.currentPage
+      }
+    });
   }
 
   getStatusClass(status: string): string {
