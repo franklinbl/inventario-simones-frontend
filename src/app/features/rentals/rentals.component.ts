@@ -14,6 +14,8 @@ import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { TableColumn } from '../../shared/components/table/models/table.model';
 import { TableComponent } from '../../shared/components/table/table.component';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { Pagination } from '../../shared/interfaces/Pagination.interface';
 
 @Component({
   selector: 'app-rentals',
@@ -25,7 +27,8 @@ import { TableComponent } from '../../shared/components/table/table.component';
     MatDialogModule,
     TableComponent,
     RouterModule,
-    ButtonComponent
+    ButtonComponent,
+    PaginationComponent
   ],
   templateUrl: './rentals.component.html',
   styleUrls: ['./rentals.component.scss']
@@ -41,6 +44,7 @@ export class RentalsComponent implements OnInit {
   selectedProducts: { product: ProductAttributes; index: number }[] = [];
   isAdmin = false;
   isLoading = false;
+  pagination!: Pagination;
 
   customInputValue: string = '';
 
@@ -84,10 +88,11 @@ export class RentalsComponent implements OnInit {
     this.loadRentals();
   }
 
-  private loadRentals(): void {
-    this.rentalService.getRentals().subscribe({
-      next: (data) => {
-        this.rentals = data.rentals;
+  private loadRentals(page: number = 1): void {
+    this.rentalService.getRentals({page, limit: 20}).subscribe({
+      next: (response) => {
+        this.rentals = response.rentals;
+        this.pagination = response.pagination;
       },
       error: (error) => {
         console.error('Error al cargar rentas:', error);
@@ -194,5 +199,9 @@ export class RentalsComponent implements OnInit {
     }
 
     return totalPriceItems + (Number(rental.delivery_price) || 0);
+  }
+
+  onPageChange(page: number) {
+    this.loadRentals(page);
   }
 }
