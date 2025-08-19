@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { RentalAttributes } from '../models/rental.model';
 import { ClientAttributes } from '../../clients/Models/client.model';
+import { Pagination } from '../../../shared/interfaces/Pagination.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,8 @@ export class RentalService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/rental`;
 
-  getRentals(): Observable<RentalAttributes[]> {
-    return this.http.get<RentalAttributes[]>(this.apiUrl);
+  getRentals(): Observable<{message: string, rentals: RentalAttributes[], pagination: Pagination}> {
+    return this.http.get<{message: string, rentals: RentalAttributes[], pagination: Pagination}>(this.apiUrl);
   }
 
   getRentalForId(rentalId: number): Observable<{message: string, rental: RentalAttributes}> {

@@ -34,39 +34,8 @@
     }
   </div>
 
-  <!--
-    @if (totalPages > 1) {
-    <div class="pagination">
-      <button
-        class="pagination-button"
-        [disabled]="!hasPreviousPage"
-        (click)="changePage(currentPage - 1)"
-      >
-        Anterior
-      </button>
-
-      <div class="page-numbers">
-        @for (page of getPages(); track $index) {
-        <button
-          class="page-number"
-          [class.active]="page === currentPage"
-          [class.ellipsis]="page === -1"
-          (click)="page !== -1 && changePage(page)"
-          [disabled]="page === -1"
-        >
-          {{ page === -1 ? '...' : page }}
-        </button>
-        }
-      </div>
-
-      <button
-        class="pagination-button"
-        [disabled]="!hasNextPage"
-        (click)="changePage(currentPage + 1)"
-      >
-        Siguiente
-      </button>
-    </div>
-    }
-  </div> -->
+  <app-pagination
+    [pagination]="pagination"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
 </div>

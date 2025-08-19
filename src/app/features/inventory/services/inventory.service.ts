@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ProductAttributes } from '../models/product.model';
+import { Pagination, PaginationParams } from '../../../shared/interfaces/Pagination.interface';
 
 export interface PaginationResponse {
   pagination: {
@@ -33,7 +34,7 @@ export class InventoryService {
     return this.http.get<PaginationResponse>(this.apiUrl, { params });
   }
 
-  getAvailableProducts(startDate: string, endDate: string, term: string = ''): Observable<{message: string, products: ProductAttributes[]}> {
+  getAvailableProducts(startDate: string, endDate: string, term: string = '', pagination?: PaginationParams): Observable<{message: string, products: ProductAttributes[], pagination: Pagination}> {
     const params: any = {
       start_date: startDate,
       end_date: endDate
@@ -43,7 +44,12 @@ export class InventoryService {
       params.term = term;
     }
 
-      return this.http.get<{message: string, products: ProductAttributes[]}>(`${this.apiUrl}/available`, { params });
+    if (pagination) {
+      if (pagination.page) params.page = pagination.page;
+      if (pagination.limit) params.limit = pagination.limit;
+    }
+
+    return this.http.get<{message: string, products: ProductAttributes[], pagination: Pagination}>(`${this.apiUrl}/available`, { params });
   }
 
   createProduct(product: Omit<ProductAttributes, 'id'>): Observable<{message: string, product: ProductAttributes}> {

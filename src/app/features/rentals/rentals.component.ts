@@ -87,7 +87,7 @@ export class RentalsComponent implements OnInit {
   private loadRentals(): void {
     this.rentalService.getRentals().subscribe({
       next: (data) => {
-        this.rentals = data;
+        this.rentals = data.rentals;
       },
       error: (error) => {
         console.error('Error al cargar rentas:', error);

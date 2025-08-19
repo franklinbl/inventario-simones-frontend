@@ -10,6 +10,8 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { TableColumn } from '../../shared/components/table/models/table.model';
 import { TableComponent } from '../../shared/components/table/table.component';
 import { finalize } from 'rxjs';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { Pagination } from '../../shared/interfaces/Pagination.interface';
 
 @Component({
   selector: 'app-inventory',
@@ -19,7 +21,8 @@ import { finalize } from 'rxjs';
     MatDialogModule,
     FormsModule,
     ButtonComponent,
-    TableComponent
+    TableComponent,
+    PaginationComponent
   ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss']
@@ -30,10 +33,7 @@ export class InventoryComponent implements OnInit {
   private authService = inject(AuthService);
   products: ProductAttributes[] = [];
   editingProductId: number | null = null;
-  currentPage = 1;
-  totalPages = 1;
-  totalItems = 0;
-  itemsPerPage = 0;
+  pagination!: Pagination;
   isAdmin = false;
   isModalOpen = false;
   hasNextPage = false;
@@ -75,7 +75,7 @@ export class InventoryComponent implements OnInit {
 
   private loadProducts(page: number = 1): void {
     const currentlyDate = new Date().toISOString().split('T')[0];
-    this.inventoryService.getAvailableProducts(currentlyDate, currentlyDate, this.searchQuery)
+    this.inventoryService.getAvailableProducts(currentlyDate, currentlyDate, this.searchQuery, { page, limit: 30 })
     .pipe(
       finalize
       (() => this.isLoading = false)
@@ -83,64 +83,13 @@ export class InventoryComponent implements OnInit {
     .subscribe({
       next: (response) => {
         this.products = response.products;
+        this.pagination = response.pagination;
       },
       error: (error) => {
         console.error('Error loading users:', error);
         this.errorMessage = 'Error al cargar los productos';
       }
     });
-  }
-
-  changePage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.loadProducts(page);
-    }
-  }
-
-  getPages(): number[] {
-    const pages: number[] = [];
-    const maxVisiblePages = 7;
-    const halfVisible = Math.floor(maxVisiblePages / 2);
-
-    // Si hay menos páginas que el máximo visible, mostramos todas
-    if (this.totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= this.totalPages; i++) {
-        pages.push(i);
-      }
-      return pages;
-    }
-
-    // Calcular el rango de páginas a mostrar
-    let startPage = Math.max(1, this.currentPage - halfVisible);
-    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
-
-    // Ajustar el rango si estamos cerca del final
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    // Agregar la primera página
-    if (startPage > 1) {
-      pages.push(1);
-      if (startPage > 2) {
-        pages.push(-1); // -1 representa los puntos suspensivos
-      }
-    }
-
-    // Agregar las páginas del rango
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    // Agregar la última página si es necesario
-    if (endPage < this.totalPages) {
-      if (endPage < this.totalPages - 1) {
-        pages.push(-1); // -1 representa los puntos suspensivos
-      }
-      pages.push(this.totalPages);
-    }
-
-    return pages;
   }
 
   get modalTitle(): string {
@@ -171,6 +120,10 @@ export class InventoryComponent implements OnInit {
         }
       }
     });
+  }
+
+  onPageChange(page: number) {
+    this.loadProducts(page);
   }
 
   searchProduct() {

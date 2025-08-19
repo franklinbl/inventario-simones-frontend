@@ -3,15 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ClientAttributes } from '../Models/client.model';
-
-interface Pagination {
-  currentPage: number,
-  hasNextPage: boolean,
-  hasPreviousPage: boolean,
-  limit: number,
-  total: number,
-  totalPages: number
-}
+import { Pagination } from '../../../shared/interfaces/Pagination.interface';
 
 @Injectable({
   providedIn: 'root'

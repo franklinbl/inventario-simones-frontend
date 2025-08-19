@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Pagination } from '../shared/interfaces/Pagination.interface';
 
 export interface User {
   id: number;
@@ -20,15 +21,6 @@ export interface CreateUserDto {
   username: string;
   password: string;
   role_id: number;
-}
-
-interface Pagination {
-  currentPage: number,
-  hasNextPage: boolean,
-  hasPreviousPage: boolean,
-  limit: number,
-  total: number,
-  totalPages: number
 }
 
 @Injectable({
