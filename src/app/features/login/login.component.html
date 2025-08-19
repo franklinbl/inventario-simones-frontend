@@ -1,43 +1,52 @@
-<div class="login-container">
-  <div class="login-box">
-    <h2>Iniciar Sesión</h2>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="username">Usuario</label>
-        <input
-          type="text"
-          id="username"
-          formControlName="username"
-          [class.is-invalid]="username.invalid && username.touched">
-          @if (username.invalid && username.touched) {
-            <div class="invalid-feedback">
-              El usuario es requerido
-            </div>
-          }
+<div class="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
+  <div class="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+    <div class="flex-1 bg-indigo-100 text-center hidden lg:flex">
+        <div class="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat bg-[url('/assets/login.png')]"></div>
+    </div>
+
+    <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12 flex flex-col justify-center items-center">
+      <div class="mt-8 flex flex-col items-center w-full">
+          <h1 class="text-2xl xl:text-3xl font-extrabold">
+              SIMONES
+          </h1>
+          <form class="w-full flex-1 mt-8" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <div class="mx-auto max-w-xs">
+                  <input
+                      class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200
+                            placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                      type="text"
+                      placeholder="Usuario"
+                      id="username"
+                      formControlName="username"/>
+
+                  <input
+                      class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200
+                            placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                      type="password"
+                      placeholder="Clave"
+                      id="password"
+                      formControlName="password"/>
+
+                  <button
+                      class="mt-5 tracking-wide font-semibold bg-[#556995] text-gray-100 w-full py-4 rounded-lg
+                            hover:bg-[#7685A3] transition-all duration-300 ease-in-out flex items-center justify-center
+                            focus:shadow-outline focus:outline-none cursor-pointer"
+                      type="submit"
+                      [disabled]="loginForm.invalid || isLoading">
+                      <span class="ml-3">
+                          {{ isLoading ? 'Cargando...' : 'Iniciar sesión' }}
+                      </span>
+                  </button>
+
+                  <p class="mt-6 text-xs text-gray-600 text-center">
+                      Acepto cumplir con los
+                      <a href="#" class="border-b border-gray-500 border-dotted">Términos de servicio</a>
+                      y la
+                      <a href="#" class="border-b border-gray-500 border-dotted">Política de privacidad.</a>
+                  </p>
+              </div>
+          </form>
       </div>
-      <div class="form-group">
-        <label for="password">Contraseña</label>
-        <input
-          type="password"
-          id="password"
-          formControlName="password"
-          [class.is-invalid]="password.invalid && password.touched">
-          @if (password.invalid && password.touched) {
-            <div class="invalid-feedback">
-              La contraseña es requerida
-            </div>
-          }
-      </div>
-      @if (errorMessage) {
-        <div class="error-message">
-          {{ errorMessage }}
-        </div>
-      }
-      <button
-        type="submit"
-        [disabled]="loginForm.invalid || isLoading">
-        {{ isLoading ? 'Cargando...' : 'Ingresar' }}
-      </button>
-    </form>
+    </div>
   </div>
 </div>

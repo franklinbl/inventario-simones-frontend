@@ -28,14 +28,6 @@ export class LoginComponent {
     });
   }
 
-  get username() {
-    return this.loginForm.get('username')!;
-  }
-
-  get password() {
-    return this.loginForm.get('password')!;
-  }
-
   onSubmit(): void {
     if (this.loginForm.invalid) {
       return;
@@ -44,7 +36,7 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.authService.login(this.username.value, this.password.value)
+    this.authService.login(this.loginForm.value)
       .pipe(
         finalize(() => this.isLoading = false)
       )
@@ -61,5 +53,14 @@ export class LoginComponent {
           this.errorMessage = 'Ocurrió un error al intentar iniciar sesión';
         }
       });
+  }
+
+  getErrorMessage(controlName: string): string {
+    console.log(controlName);
+    const control = this.loginForm.get(controlName);
+    if (control?.hasError('required')) {
+      return 'Este campo es requerido';
+    }
+    return '';
   }
 }

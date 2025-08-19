@@ -13,6 +13,11 @@ interface LoginResponse {
   };
 }
 
+interface UserLogin {
+  username: string;
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,8 +36,8 @@ export class AuthService {
     }
   }
 
-  login(username: string, password: string): Observable<boolean> {
-    return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`, { username, password })
+  login(user: UserLogin): Observable<boolean> {
+    return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`, user)
       .pipe(
         tap({
           next: (response) => {
