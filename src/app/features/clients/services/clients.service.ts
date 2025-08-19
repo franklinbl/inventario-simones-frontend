@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ClientAttributes } from '../Models/client.model';
-import { Pagination } from '../../../shared/interfaces/Pagination.interface';
+import { Pagination, PaginationParams } from '../../../shared/interfaces/Pagination.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +13,15 @@ export class ClientsService {
 
   constructor(private http: HttpClient) {}
 
-  getClients(): Observable<{message: string, clients: ClientAttributes[], pagination: Pagination}> {
-    return this.http.get<{message: string, clients: ClientAttributes[], pagination: Pagination}>(`${this.API_URL}`);
+  getClients(pagination?: PaginationParams): Observable<{message: string, clients: ClientAttributes[], pagination: Pagination}> {
+    const params: any = {};
+
+    if (pagination) {
+      if (pagination.page) params.page = pagination.page;
+      if (pagination.limit) params.limit = pagination.limit;
+    }
+
+    return this.http.get<{message: string, clients: ClientAttributes[], pagination: Pagination}>(`${this.API_URL}`, { params });
   }
 
   getClientByDni(dni: string): Observable<ClientAttributes> {

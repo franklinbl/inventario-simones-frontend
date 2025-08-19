@@ -7,11 +7,13 @@ import { EditClientComponent } from './components/edit-client/edit-client.compon
 import { TableColumn } from '../../shared/components/table/models/table.model';
 import { TableComponent } from '../../shared/components/table/table.component';
 import { finalize } from 'rxjs';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { Pagination } from '../../shared/interfaces/Pagination.interface';
 
 @Component({
   selector: 'app-clients',
   standalone: true,
-  imports: [CommonModule, TableComponent],
+  imports: [CommonModule, TableComponent, PaginationComponent],
   templateUrl: './clients.component.html',
   styleUrls: ['./clients.component.scss']
 })
@@ -22,6 +24,7 @@ export class ClientsComponent implements OnInit {
   clients: ClientAttributes[] = [];
   isLoading = false;
   errorMessage = '';
+  pagination!: Pagination;
   columns: TableColumn[] = [
     { key: 'name', label: 'Nombre', type: 'text' },
     { key: 'dni', label: 'Cédula', type: 'text' },
@@ -42,13 +45,18 @@ export class ClientsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.clientsService.getClients()
+    this.loadClients();
+  }
+
+  loadClients(page: number = 1) {
+    this.clientsService.getClients({page})
       .pipe(
         finalize(() => this.isLoading = false)
       )
       .subscribe({
-        next: (clients) => {
-          this.clients = clients.clients;
+        next: (response) => {
+          this.clients = response.clients;
+          this.pagination = response.pagination;
         },
         error: (error) => {
           console.error('Error loading users:', error);
@@ -77,5 +85,9 @@ export class ClientsComponent implements OnInit {
         this.clients[index] = { ...this.clients[index], ...result };
       }
     });
+  }
+
+  onPageChange(page: number) {
+    this.loadClients(page);
   }
 }

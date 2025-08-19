@@ -5,7 +5,8 @@
       <p class="text-base text-gray-500 mb-6">Gestiona la base de datos de todos tus clientes</p>
     </div>
   </div>
-  <div>
+
+  <div class="mb-5">
     @if (isLoading) {
       <div class="loading-spinner">
         <div class="spinner-border text-primary" role="status">
@@ -22,4 +23,9 @@
       <app-table [columns]="columns" [data]="clients" (action)="updateClient($event)"></app-table>
     }
   </div>
+
+  <app-pagination
+    [pagination]="pagination"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
 </div>
