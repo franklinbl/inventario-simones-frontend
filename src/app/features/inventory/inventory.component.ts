@@ -75,7 +75,7 @@ export class InventoryComponent implements OnInit {
 
   private loadProducts(page: number = 1): void {
     const currentlyDate = new Date().toISOString().split('T')[0];
-    this.inventoryService.getAvailableProducts(currentlyDate, currentlyDate, this.searchQuery, { page, limit: 30 })
+    this.inventoryService.getAvailableProducts(currentlyDate, currentlyDate, this.searchQuery, { page, limit: 1 })
     .pipe(
       finalize
       (() => this.isLoading = false)

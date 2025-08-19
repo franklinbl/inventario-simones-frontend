@@ -34,7 +34,7 @@
 
   &:focus {
     outline: none;
-    border-color: #1976d2;
+    border-color: $secondary-color;
   }
 
   &.is-invalid {
