@@ -73,7 +73,7 @@ export class RentalsComponent implements OnInit {
         },
         {
           icon: 'calendar-check',
-          tooltip: 'Descargar factura',
+          tooltip: 'Completar renta',
           onClick: (row) => this.rentalCompleted(row)
         }
       ]
