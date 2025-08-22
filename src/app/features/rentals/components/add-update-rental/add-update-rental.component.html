@@ -1,6 +1,253 @@
-
 <div class="main-container">
-  <div class="flex items-center mb-4">
+  <div class="mb-4">
+    @if (isEditing) {
+    <span class="flex items-center">
+      <mat-icon
+        class="icon mr-2 cursor-pointer"
+        [svgIcon]="'arrow-left-to-line'"
+        (click)="redirectToRentals()"
+      ></mat-icon>
+      <h2>Editar renta</h2>
+    </span>
+    } @else {
+    <span class="flex items-center">
+      <mat-icon
+        class="icon mr-2 cursor-pointer"
+        [svgIcon]="'arrow-left-to-line'"
+        (click)="redirectToRentals()"
+      ></mat-icon>
+      <h2>Nueva renta</h2>
+    </span>
+    <p class="text-sm text-[#6E7777]">
+      Crea una nueva renta de equipos y mobiliario para un evento.
+    </p>
+    }
+  </div>
+
+  <div class="grid grid-cols-2 auto-rows-auto gap-4">
+    <div class="bg-white rounded-lg shadow-md border-1 border-[#E2E5E3] p-4">
+      <div class="flex items-center gap-2 mb-4">
+        <mat-icon
+          class="icon mr-2 cursor-pointer"
+          [svgIcon]="'search'"
+        ></mat-icon>
+        <span class="font-semibold text-slate-800">Buscar Usuario</span>
+      </div>
+
+      <div class="flex gap-4 items-center">
+        <app-input-field
+          placeholder="Ingresa tu nombre"
+          ngDefaultControl
+          type="text"
+          [formControl]="clientDniCtrl"
+        ></app-input-field>
+
+        <app-button (click)="searchClient()">Buscar</app-button>
+
+        <app-button type="secondary-outline" (click)="newClient()"
+          >Nuevo</app-button
+        >
+      </div>
+    </div>
+
+    <div class="bg-white col-start-1 row-start-2 rounded-lg shadow-sm p-4">
+      <!-- Icono + Título -->
+      <div class="flex items-center gap-2 mb-4">
+        <mat-icon
+          class="icon mr-2 cursor-pointer"
+          [svgIcon]="'user'"
+        ></mat-icon>
+        <span class="font-semibold text-slate-800">Datos del Cliente</span>
+      </div>
+
+      <!-- Nombre -->
+      <div class="mb-4">
+        <label class="block text-slate-700 font-medium mb-1"
+          >Nombre del Cliente</label
+        >
+        <app-input-field
+          placeholder="Nombre completo"
+          ngDefaultControl
+          type="text"
+        ></app-input-field>
+      </div>
+
+      <!-- Cédula + Teléfono -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-slate-700 font-medium mb-1"
+            >Cédula del Cliente</label
+          >
+          <app-input-field
+            placeholder="12345678"
+            ngDefaultControl
+            type="text"
+          ></app-input-field>
+        </div>
+
+        <div>
+          <label class="block text-slate-700 font-medium mb-1"
+            >Teléfono del Cliente</label
+          >
+          <app-input-field
+            placeholder="0424 1234567"
+            ngDefaultControl
+            type="text"
+          ></app-input-field>
+        </div>
+      </div>
+    </div>
+
+    <form
+      [formGroup]="rentalForm"
+      class="bg-white col-start-1 row-start-3 rounded-lg shadow-sm p-4"
+    >
+      <!-- Icono + Título -->
+      <div class="flex items-center gap-2 mb-4">
+        <mat-icon
+          class="icon mr-2 cursor-pointer"
+          [svgIcon]="'calendar'"
+        ></mat-icon>
+        <span class="font-semibold text-slate-800">Datos de la Renta</span>
+      </div>
+
+      <!-- Fechas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-slate-700 font-medium mb-1"
+            >Fecha de Renta</label
+          >
+          <app-input-field
+            formControlName="start_date"
+            ngDefaultControl
+            type="calendar"
+          ></app-input-field>
+        </div>
+        <div>
+          <label class="block text-slate-700 font-medium mb-1"
+            >Fecha de Devolución</label
+          >
+          <app-input-field
+            formControlName="end_date"
+            ngDefaultControl
+            type="calendar"
+          ></app-input-field>
+        </div>
+      </div>
+
+      <!-- Transporte y Precio -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-slate-700 font-medium mb-1"
+            >Tipo de Transporte</label
+          >
+          <app-input-field
+            ngDefaultControl
+            type="select"
+            [selectOption]="selectOption"
+          ></app-input-field>
+        </div>
+        <div>
+          <label class="block text-slate-700 font-medium mb-1"
+            >Precio del transporte</label
+          >
+          <app-input-field
+            placeholder="0"
+            ngDefaultControl
+            type="number"
+          ></app-input-field>
+        </div>
+      </div>
+
+      <!-- Descuento -->
+      <div class="mb-4">
+        <label
+          class="block text-slate-700 font-medium mb-1 flex items-center gap-1"
+        >
+          Descuento a cliente
+        </label>
+        <app-input-field
+          placeholder="0"
+          ngDefaultControl
+          type="number"
+        ></app-input-field>
+      </div>
+
+      <!-- Notas -->
+      <div>
+        <label class="block text-slate-700 font-medium mb-1">Notas</label>
+        <app-input-field ngDefaultControl type="textarea"></app-input-field>
+      </div>
+    </form>
+
+    <div
+      class="bg-white row-span-3 col-start-2 row-start-1 rounded-xl shadow-sm border border-gray-200 p-6"
+    >
+      <div class="flex items-center gap-2 mb-4">
+        <mat-icon
+          class="icon mr-2 cursor-pointer"
+          [svgIcon]="'package'"
+        ></mat-icon>
+        <h2 class="text-lg font-semibold text-gray-900">
+          Seleccionar productos
+        </h2>
+      </div>
+
+      <div class="mb-4">
+        <app-input-field
+          type="search-select"
+          label="Buscar producto"
+          placeholder="Escribe para buscar..."
+          [filteredProducts]="filteredProducts"
+          (searchChange)="loadProducts()"
+          [formControl]="productFilterCtrl"
+          (productSelected)="onProductSelected($event)"
+        ></app-input-field>
+
+        <div class="space-y-3 mt-3">
+          @if (selectedProducts.length > 0) {
+            @for (product of selectedProducts; track product.product.id) {
+              <div class="px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
+                <div class="flex justify-between">
+                  <div>
+                    <h3 class="font-medium text-gray-900">{{ product.product.name }}</h3>
+                    <p class="text-sm font-medium text-gray-500">
+                      Stock disponible: {{ product.product.available_quantity }}
+                    </p>
+                  </div>
+                  <div class="flex items-center">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-gray-700">Cantidad</span>
+                      <input
+                        type="number"
+                        [value]="1"
+                        min="1"
+                        [max]="product.product.available_quantity"
+                        class="w-20 px-3 py-2 bg-yellow-50 border border-gray-200 rounded-lg text-center text-gray-900"
+                      />
+                    </div>
+                    <button
+                      class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      (click)="removeProduct(product.product.id)"
+                    >
+                      <mat-icon class="icon mr-2 cursor-pointer" [svgIcon]="'trash'"></mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="text-sm text-gray-500">No hay productos seleccionados.</div>
+          }
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="flex items-center mb-4">
     <mat-icon class="icon mr-2 cursor-pointer" [svgIcon]="'arrow-left-to-line'" (click)="redirectToRentals()"></mat-icon>
     @if (isEditing) {
       <h2>Editar renta</h2>
@@ -260,5 +507,5 @@
         </div>
       </form>
     </div>
-  </div>
+  </div> -->
 </div>

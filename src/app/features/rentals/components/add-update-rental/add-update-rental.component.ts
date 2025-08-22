@@ -1,10 +1,9 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { ProductAttributes } from '../../../inventory/models/product.model';
-import { debounceTime, map, Observable, startWith } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -17,6 +16,8 @@ import { RentalService } from '../../services/rental.service';
 import { RentalAttributes } from '../../models/rental.model';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { InputFieldComponent } from "../../../../shared/components/input-field/input-field.component";
 
 @Component({
   selector: 'app-add-update-rental',
@@ -25,14 +26,15 @@ import { DomSanitizer } from '@angular/platform-browser';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    MatDialogModule,
     MatButtonModule,
     MatSelectModule,
     MatIcon,
     MatInputModule,
     MatFormFieldModule,
-    NgxMatSelectSearchModule
-  ],
+    NgxMatSelectSearchModule,
+    ButtonComponent,
+    InputFieldComponent
+],
   templateUrl: './add-update-rental.component.html',
   styleUrls: ['./add-update-rental.component.scss']
 })
@@ -54,16 +56,17 @@ export class AddUpdateRentalComponent implements OnInit {
   clientForm: FormGroup;
   isEditing = false;
   isAdmin = false;
-  clientDniInput = '';
+  clientDniCtrl = new FormControl<string>('');
   productFilterCtrl = this.formBuilder.control<string>('');
-  selectedProductCtrl = this.formBuilder.control<ProductAttributes | null>(null);
+  selectedProductCtrl = new FormControl<ProductAttributes | null>(null);
   selectedProducts: { product: ProductAttributes; index: number }[] = [];
-  filteredProducts: Observable<ProductAttributes[]> = this.productFilterCtrl.valueChanges.pipe(
-    startWith(''),
-    map(value => this._filterProducts(value || ''))
-  );
-  products: ProductAttributes[] = [];
+  private _filteredProductsSubject = new BehaviorSubject<ProductAttributes[]>([]);
+  filteredProducts = this._filteredProductsSubject.asObservable();
   currentRentalId: number | null = null;
+  selectOption = [
+    {label: 'Transporte por cliente', value: 'false'},
+    {label: 'Transporte por nosotros', value: 'true'},
+  ];
 
   constructor() {
     this.rentalForm = this.formBuilder.group({
@@ -92,28 +95,11 @@ export class AddUpdateRentalComponent implements OnInit {
         deliveryPriceControl?.setValue(null);
       }
     });
-
-    // Suscribirse a cambios en la selección de producto
-    this.selectedProductCtrl.valueChanges.subscribe(product => {
-      if (product && !this.selectedProducts.some(sp => sp.product.id === product.id)) {
-        const index = this.productsFormArray.length;
-        this.productsFormArray.push(this.formBuilder.group({
-          product_id: [product.id],
-          quantity_rented: [null, [
-            Validators.required,
-            Validators.min(1),
-            this.maxStockValidator(product.available_quantity)
-          ]]
-        }));
-        this.selectedProducts.push({ product, index });
-        this.selectedProductCtrl.setValue(null); // Limpiar la selección
-      }
-    });
   }
 
   ngOnInit(): void {
     const iconFolder = '/assets/icons/';
-    const icons = ['arrow-left-to-line'];
+    const icons = ['arrow-left-to-line', 'search', 'user', 'calendar', 'package', 'trash'];
 
     icons.forEach(icon => {
       this.matIconRegistry.addSvgIcon(
@@ -138,6 +124,15 @@ export class AddUpdateRentalComponent implements OnInit {
         }
       })
     }
+
+    this.productFilterCtrl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(value => {
+      if (value && value.trim() !== '' && value.length > 2) {
+        this.loadProducts();
+      }
+    });
   }
 
   loadEditRental() {
@@ -193,23 +188,26 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   loadProducts(): void {
-    if (this.productFilterCtrl.value && this.productFilterCtrl.value?.trim() !== '' && this.productFilterCtrl.value?.length > 2) {
+    const value = this.productFilterCtrl.value;
+    if (value && value.trim() !== '' && value.length > 2) {
       this.inventoryService.getAvailableProducts(
         this.rentalForm.get('start_date')?.value,
         this.rentalForm.get('end_date')?.value,
-        this.productFilterCtrl.value).subscribe({
+        value
+      ).subscribe({
         next: (data) => {
-          this.products = data.products;
-          this.filteredProducts = this.productFilterCtrl.valueChanges.pipe(
-            startWith(''),
-            debounceTime(300),
-            map(value => this._filterProducts(value || ''))
-          );
+          // Emite los productos al Subject para que el dropdown los muestre
+          this._filteredProductsSubject.next(data.products);
         },
         error: (error) => {
           console.error('Error al cargar productos:', error);
+          // En caso de error, emite una lista vacía
+          this._filteredProductsSubject.next([]);
         }
       });
+    } else {
+      // Si no hay texto, no mostrar resultados
+      this._filteredProductsSubject.next([]);
     }
   }
 
@@ -251,7 +249,7 @@ export class AddUpdateRentalComponent implements OnInit {
         this.rentalService.createRental(rentalData, this.clientForm.value).subscribe({
           next: () => {
             this.clientForm.reset();
-            this.clientDniInput = '';
+            this.clientDniCtrl.patchValue(null);
             this.rentalForm.patchValue({
               client_id: null
             });
@@ -275,8 +273,8 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   searchClient() {
-    if (!this.clientDniInput) return;
-    this.clientsService.getClientByDni(this.clientDniInput).subscribe({
+    if (!this.clientDniCtrl.value) return;
+    this.clientsService.getClientByDni(this.clientDniCtrl.value).subscribe({
       next: (client) => {
         if (client) {
           this.clientForm.patchValue({
@@ -305,7 +303,7 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   newClient() {
-    this.clientDniInput = '';
+    this.clientDniCtrl.patchValue(null);
     this.clientForm.reset();
     this.clientForm.get('name')?.enable();
     this.clientForm.get('dni')?.enable();
@@ -337,14 +335,6 @@ export class AddUpdateRentalComponent implements OnInit {
       return `La cantidad no puede ser mayor al stock disponible (${error.max})`;
     }
     return '';
-  }
-
-  private _filterProducts(value: string): ProductAttributes[] {
-    const filterValue = value.toLowerCase();
-    return this.products.filter(product =>
-      product.name.toLowerCase().includes(filterValue) ||
-      product.description.toLowerCase().includes(filterValue)
-    );
   }
 
   get productsFormArray() {
@@ -387,5 +377,24 @@ export class AddUpdateRentalComponent implements OnInit {
       }
       return null;
     };
+  }
+
+  onProductSelected(product: ProductAttributes) {
+    if (product && !this.selectedProducts.some(sp => sp.product.id === product.id)) {
+      const index = this.productsFormArray.length;
+      this.productsFormArray.push(this.formBuilder.group({
+        product_id: [product.id],
+        quantity_rented: [null, [
+          Validators.required,
+          Validators.min(1),
+          this.maxStockValidator(product.available_quantity)
+        ]]
+      }));
+      this.selectedProducts.push({ product, index });
+    }
+    // Limpiar el input de búsqueda
+    this.productFilterCtrl.setValue('');
+    this.productFilterCtrl.markAsPristine();
+    this._filteredProductsSubject.next([]);
   }
 }
