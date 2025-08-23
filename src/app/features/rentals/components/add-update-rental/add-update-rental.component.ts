@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { InputFieldComponent } from "../../../../shared/components/input-field/input-field.component";
+import { ValidationService } from '../../../../services/validation.service';
 
 @Component({
   selector: 'app-add-update-rental',
@@ -46,6 +47,7 @@ export class AddUpdateRentalComponent implements OnInit {
   private inventoryService = inject(InventoryService);
   private clientsService = inject(ClientsService);
   private rentalService = inject(RentalService);
+  private validationService = inject(ValidationService);
   private router = inject(Router);
   @Input() private rentalId: number | null = null;
 
@@ -64,8 +66,8 @@ export class AddUpdateRentalComponent implements OnInit {
   filteredProducts = this._filteredProductsSubject.asObservable();
   currentRentalId: number | null = null;
   selectOption = [
-    {label: 'Transporte por cliente', value: 'false'},
-    {label: 'Transporte por nosotros', value: 'true'},
+    {label: 'Transporte por cliente', value: false},
+    {label: 'Transporte por nosotros', value: true},
   ];
 
   constructor() {
@@ -314,27 +316,27 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   getErrorMessage(controlName: string): string {
-    const control = this.rentalForm.get(controlName);
-    if (control?.hasError('required')) {
-      return 'Este campo es requerido';
-    }
-    if (control?.hasError('minlength')) {
-      return `Mínimo ${control.errors?.['minlength'].requiredLength} caracteres`;
-    }
-    if (control?.hasError('email')) {
-      return 'Ingrese un email válido';
-    }
-    if (control?.hasError('pattern')) {
-      return 'Ingrese un número de teléfono válido';
-    }
-    if (control?.hasError('min')) {
-      return 'El valor debe ser mayor o igual a 0';
-    }
-    if (control?.hasError('maxStock')) {
-      const error = control.errors?.['maxStock'];
-      return `La cantidad no puede ser mayor al stock disponible (${error.max})`;
+    const control = this.rentalForm.get(controlName) || this.clientForm.get(controlName);
+
+    if (control?.invalid && control.touched) {
+      return ValidationService.getErrorMessage(control.errors, this.getLabel(controlName));
     }
     return '';
+  }
+  private getLabel(controlName: string): string {
+    const labels: Record<string, string> = {
+      start_date: 'Fecha de inicio',
+      end_date: 'Fecha de fin',
+      client_id: 'Cliente',
+      notes: 'Notas',
+      is_delivery_by_us: 'Tipo de transporte',
+      delivery_price: 'Precio de transporte',
+      discount: 'Descuento',
+      name: 'Nombre del cliente',
+      dni: 'Cédula del cliente',
+      phone: 'Teléfono del cliente'
+    };
+    return labels[controlName] || 'Este campo';
   }
 
   get productsFormArray() {
