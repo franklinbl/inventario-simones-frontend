@@ -37,7 +37,8 @@ export class InputFieldComponent implements ControlValueAccessor {
   @Output() searchChange = new EventEmitter<string>();
   @Output() productSelected = new EventEmitter<any>();
 
-  classBase = 'w-full border rounded-lg py-1 px-3 text-slate-700 placeholder-slate-400 bg-[#fcfdf6] focus:outline-none focus:ring-1 focus:ring-[#556995] disabled:bg-gray-100 disabled:text-slate-500 disabled:cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-[#556995]';
+  classBase = `w-full border border-[#EFF0E5] rounded-lg py-1 px-3 text-slate-700 placeholder-slate-400 bg-[#fcfdf6] focus:outline-none focus:ring-1
+               focus:ring-[#556995] disabled:bg-gray-100 disabled:text-slate-500 disabled:cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-[#556995]`;
 
   value = '';
   selectedOption: any = null;
