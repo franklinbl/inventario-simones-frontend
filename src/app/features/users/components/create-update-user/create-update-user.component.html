@@ -1,0 +1,83 @@
+<mat-dialog-content>
+  <div class="mb-4">
+    <span class="flex items-center">
+      <mat-icon class="icon mr-2 cursor-pointer" [svgIcon]="'user'"></mat-icon>
+      <h2>{{modalTitle}}</h2>
+    </span>
+    <p class="text-sm text-[#6E7777]">
+      {{modalSubTitle}}
+    </p>
+  </div>
+
+  <div>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <app-input-field
+          type="text"
+          id="name"
+          formControlName="name"
+          label="Nombre completo"
+          placeholder="Ingrese el nombre completo"
+        ></app-input-field>
+        @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
+          <div class="text-xs text-red-500 mt-1">
+            {{ getErrorMessage('name') }}
+          </div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <app-input-field
+          type="text"
+          id="username"
+          formControlName="username"
+          class="form-control"
+          label="Nombre de usuario"
+          placeholder="Ingresa el nombre de usuario"
+        ></app-input-field>
+        @if (userForm.get('username')?.invalid && userForm.get('username')?.touched) {
+          <div class="text-xs text-red-500 mt-1">
+            {{ getErrorMessage('username') }}
+          </div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <app-input-field
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-control"
+          label="Contraseña"
+          placeholder="Ingresa una contraseña"
+        ></app-input-field>
+        @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
+          <div class="text-xs text-red-500 mt-1">
+            {{ getErrorMessage('password') }}
+          </div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <app-input-field
+            ngDefaultControl
+            type="select"
+            [selectOption]="selectOption"
+            formControlName="role_id"
+            label="Rol del usuario"
+            placeholder="Seleccione un rol"
+          ></app-input-field>
+        @if (userForm.get('role_id')?.invalid && userForm.get('role_id')?.touched) {
+          <div class="text-xs text-red-500 mt-1">
+            {{ getErrorMessage('role_id') }}
+          </div>
+        }
+      </div>
+
+      <div class="flex mt-6 justify-end gap-2">
+        <app-button size="md" type="secondary-outline" (click)="closeModal()">Cancelar</app-button>
+        <app-button size="md" (click)="onSubmit()" [disabled]="userForm.invalid">Guardar</app-button>
+      </div>
+    </form>
+  </div>
+</mat-dialog-content>

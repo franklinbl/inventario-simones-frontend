@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 
 interface SelectOptionType {
   label: string;
-  value: string | boolean;
+  value: string | number | boolean;
 }
 
 @Component({
@@ -37,8 +37,10 @@ export class InputFieldComponent implements ControlValueAccessor {
   @Output() searchChange = new EventEmitter<string>();
   @Output() productSelected = new EventEmitter<any>();
 
-  classBase = `w-full border border-[#EFF0E5] rounded-lg py-1 px-3 text-slate-700 placeholder-slate-400 bg-[#fcfdf6] focus:outline-none focus:ring-1
+  classBaseInput = `w-full border border-[#EFF0E5] rounded-lg py-1 px-3 text-slate-700 placeholder-slate-400 bg-[#fcfdf6] focus:outline-none focus:ring-1
                focus:ring-[#556995] disabled:bg-gray-100 disabled:text-slate-500 disabled:cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-[#556995]`;
+
+  classBaseLabel=`block text-sm font-medium text-slate-600 mb-1`;
 
   value = '';
   selectedOption: any = null;

@@ -1,5 +1,5 @@
 @if (type !== 'textarea' && type !== 'calendar' && type !== 'select' && type !== 'search-select') {
-  <label *ngIf="label" for="input">{{ label }}</label>
+  <label *ngIf="label" for="input" [class]="classBaseLabel">{{ label }}</label>
   <input
     id="input"
     [type]="type"
@@ -10,11 +10,15 @@
     [min]="min"
     [max]="max"
     [disabled]="disabled"
-    [class]="classBase"
+    [class]="classBaseInput"
   />
 }
 
 @if (type === 'calendar') {
+  <label *ngIf="label" for="input" [class]="classBaseLabel">
+    {{ label }}
+  </label>
+
   <input
     id="input"
     type="date"
@@ -23,24 +27,35 @@
     (input)="onInput($event)"
     (blur)="onTouched()"
     [disabled]="disabled"
-    [class]="classBase"
+    [class]="classBaseInput"
   />
 }
 
 @if (type === 'textarea') {
+  <label *ngIf="label" for="input" [class]="classBaseLabel">
+    {{ label }}
+  </label>
+
   <textarea
+    [value]="value"
+    (change)="onInput($event)"
+    [disabled]="disabled"
     placeholder="Notas adicionales..."
     rows="3"
-    [class]="classBase"
+    [class]="classBaseInput"
   ></textarea>
 }
 
 @if (type === 'select') {
+  <label *ngIf="label" for="input" [class]="classBaseLabel">
+    {{ label }}
+  </label>
+
   <select
     [value]="value"
     (change)="onInput($event)"
     [disabled]="disabled"
-    [class]="classBase"
+    [class]="classBaseInput"
   >
   @for (option of selectOption; track $index) {
     <option [value]="option.value">{{ option.label }}</option>
@@ -49,7 +64,7 @@
 }
 
 @if (type === 'search-select') {
-  <label *ngIf="label" class="block text-sm font-medium text-slate-600 mb-1">
+  <label *ngIf="label" for="input" [class]="classBaseLabel">
     {{ label }}
   </label>
 

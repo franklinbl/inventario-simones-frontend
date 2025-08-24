@@ -9,7 +9,7 @@ import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { AuthService } from '../../../../services/auth.service';
+import { AuthService } from '../../../../shared/services/auth.service';
 import { InventoryService } from '../../../inventory/services/inventory.service';
 import { ClientsService } from '../../../clients/services/clients.service';
 import { RentalService } from '../../services/rental.service';
@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { InputFieldComponent } from "../../../../shared/components/input-field/input-field.component";
-import { ValidationService } from '../../../../services/validation.service';
+import { ValidationService } from '../../../../shared/services/validation.service';
 
 @Component({
   selector: 'app-add-update-rental',

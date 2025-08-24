@@ -3,7 +3,7 @@ import { ClientsService } from './services/clients.service';
 import { CommonModule } from '@angular/common';
 import { ClientAttributes } from './Models/client.model';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { EditClientComponent } from './components/edit-client/edit-client.component';
+import { UpdateClientComponent } from './components/update-client/update-client.component';
 import { TableColumn } from '../../shared/components/table/models/table.model';
 import { TableComponent } from '../../shared/components/table/table.component';
 import { finalize } from 'rxjs';
@@ -76,7 +76,7 @@ export class ClientsComponent implements OnInit {
       title
     };
 
-    const dialogRef =  this.dialog.open(EditClientComponent, dialogConfig);
+    const dialogRef =  this.dialog.open(UpdateClientComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
       if (!result) return;

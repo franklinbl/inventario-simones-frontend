@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventoryService } from './services/inventory.service';
 import { ProductAttributes } from './models/product.model';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../shared/services/auth.service';
 import { AddUpdateProductComponent } from './components/add-update-inventary/add-update-inventory.component';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { ButtonComponent } from '../../shared/components/button/button.component';

@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { User } from '../../services/user.service';
+import { AuthService } from '../../shared/services/auth.service';
+import { UserAttributes } from '../../features/users/models/users.model';
 import { MatIcon, MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -17,7 +17,7 @@ export class SidebarComponent implements OnInit {
   private matIconRegistry = inject(MatIconRegistry);
   private domSanitizer = inject(DomSanitizer);
   isCollapsed = false;
-  user: User | null = null;
+  user: UserAttributes | null = null;
   menuItems = [
     {
       name: 'Dashboard',

@@ -6,17 +6,17 @@ import { ClientAttributes } from '../../Models/client.model';
 import { ClientsService } from '../../services/clients.service';
 
 @Component({
-  selector: 'app-edit-client',
+  selector: 'app-update-client',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatDialogModule],
-  templateUrl: './edit-client.component.html',
-  styleUrls: ['./edit-client.component.scss']
+  templateUrl: './update-client.component.html',
+  styleUrls: ['./update-client.component.scss']
 })
-export class EditClientComponent implements OnInit {
+export class UpdateClientComponent implements OnInit {
   @Output() save = new EventEmitter<any>();
   @Output() cancel = new EventEmitter<void>();
   private clientsService = inject(ClientsService);
-  readonly dialogRef = inject(MatDialogRef<EditClientComponent>);
+  readonly dialogRef = inject(MatDialogRef<UpdateClientComponent>);
   private client: ClientAttributes = inject(MAT_DIALOG_DATA).client;
   modalTitle = inject(MAT_DIALOG_DATA).title;
 

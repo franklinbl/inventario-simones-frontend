@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { RentalService } from './services/rental.service';
 import { RentalAttributes } from './models/rental.model';
 import { ProductAttributes } from '../inventory/models/product.model';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../shared/services/auth.service';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { CompletedRentalComponent } from './components/completed-rental/completed-rental.component';
 import { StatusRentalsPipe } from './pipes/status-rentals.pipe';
