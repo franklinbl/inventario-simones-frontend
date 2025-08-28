@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { ProductAttributes } from '../../../inventory/models/product.model';
@@ -47,7 +47,6 @@ export class AddUpdateRentalComponent implements OnInit {
   private inventoryService = inject(InventoryService);
   private clientsService = inject(ClientsService);
   private rentalService = inject(RentalService);
-  private validationService = inject(ValidationService);
   private router = inject(Router);
   @Input() private rentalId: number | null = null;
 
@@ -371,11 +370,10 @@ export class AddUpdateRentalComponent implements OnInit {
   }
 
   maxStockValidator(maxStock: number, currentRentalQuantity: number = 0) {
-    return (control: FormControl) => {
+    return (control: AbstractControl) => {
       const value = control.value;
-      const maxAllowed = this.isEditing ? maxStock + currentRentalQuantity : maxStock;
-      if (value > maxAllowed) {
-        return { maxStock: { max: maxAllowed, actual: value } };
+      if (value > maxStock) {
+        return { maxStock: { max: maxStock, actual: currentRentalQuantity } };
       }
       return null;
     };
@@ -393,10 +391,63 @@ export class AddUpdateRentalComponent implements OnInit {
         ]]
       }));
       this.selectedProducts.push({ product, index });
+
+      // Actualizar validadores después de agregar
+      this.updateValidators();
     }
-    // Limpiar el input de búsqueda
     this.productFilterCtrl.setValue('');
-    this.productFilterCtrl.markAsPristine();
     this._filteredProductsSubject.next([]);
+  }
+
+  updateAvailabilityProduct() {
+    const startDate = this.rentalForm.get('start_date')?.value;
+    const endDate = this.rentalForm.get('end_date')?.value;
+
+    if (this.selectedProducts.length === 0 || !startDate || !endDate) {
+      return;
+    }
+
+    const products = this.selectedProducts.map(p => p.product);
+
+    this.inventoryService.getrecalculateAvailabilityProducts(
+      startDate,
+      endDate,
+      products
+    ).subscribe({
+      next: (response) => {
+        response.products.forEach(updatedProduct => {
+          const item = this.selectedProducts.find(sp => sp.product.id === updatedProduct.id);
+          if (item) {
+            item.product.available_quantity = updatedProduct.available_quantity;
+          }
+        });
+
+        // Actualizar validadores y estado del formulario
+        this.updateValidators();
+      },
+      error: (error) => {
+        console.error('Error al recalcular disponibilidad:', error);
+      }
+    });
+  }
+
+  updateValidators() {
+    this.productsFormArray.controls.forEach((control) => {
+      const product = this.selectedProducts.find(sp => sp.index === this.productsFormArray.controls.indexOf(control))?.product;
+      if (product) {
+        const currentQuantity = product.rental_product?.quantity_rented || 0;
+        const validator = this.maxStockValidator(product.available_quantity, currentQuantity);
+
+        control.get('quantity_rented')?.setValidators([
+          Validators.required,
+          Validators.min(1),
+          validator
+        ]);
+        control.get('quantity_rented')?.updateValueAndValidity({ emitEvent: false });
+      }
+    });
+
+    // Actualizar el estado del formulario
+    this.rentalForm.get('products')?.updateValueAndValidity();
   }
 }

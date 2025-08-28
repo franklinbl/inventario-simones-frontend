@@ -134,6 +134,7 @@
             ngDefaultControl
             type="calendar"
             formControlName="start_date"
+            (inputChange)="updateAvailabilityProduct()"
           ></app-input-field>
           @if (getErrorMessage('start_date'); as error) {
             <div class="text-xs text-red-500 mt-1">{{ error }}</div>
@@ -147,6 +148,7 @@
             ngDefaultControl
             type="calendar"
             formControlName="end_date"
+            (inputChange)="updateAvailabilityProduct()"
           ></app-input-field>
           @if (getErrorMessage('end_date'); as error) {
             <div class="text-xs text-red-500 mt-1">{{ error }}</div>
@@ -233,7 +235,7 @@
           label="Buscar producto"
           placeholder="Escribe para buscar..."
           [filteredProducts]="filteredProducts"
-          (searchChange)="loadProducts()"
+          (inputChange)="loadProducts()"
           [formControl]="productFilterCtrl"
           (productSelected)="onProductSelected($event)"
         ></app-input-field>

@@ -34,7 +34,7 @@ export class InputFieldComponent implements ControlValueAccessor {
   @Input() filteredProducts: Observable<any[]> = of([]);
   @Input() noResultsText = 'No se encontraron elementos';
 
-  @Output() searchChange = new EventEmitter<string>();
+  @Output() inputChange = new EventEmitter<string>();
   @Output() productSelected = new EventEmitter<any>();
 
   classBaseInput = `w-full border border-[#EFF0E5] rounded-lg py-1 px-3 text-slate-700 placeholder-slate-400 bg-[#fcfdf6] focus:outline-none focus:ring-1
@@ -51,9 +51,10 @@ export class InputFieldComponent implements ControlValueAccessor {
   onInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     const parsedValue = value === 'true' ? true : value === 'false' ? false : value;
+    if (value === this.value) return;
     this.value = value;
     this.onChange(parsedValue);
-    this.searchChange.emit(value);
+    this.inputChange.emit(value);
   }
 
   registerOnChange(fn: any): void {

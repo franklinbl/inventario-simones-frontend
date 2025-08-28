@@ -52,6 +52,16 @@ export class InventoryService {
     return this.http.get<{message: string, products: ProductAttributes[], pagination: Pagination}>(`${this.apiUrl}/available`, { params });
   }
 
+  getrecalculateAvailabilityProducts(startDate: string, endDate: string, products: ProductAttributes[]): Observable<{message: string, products: ProductAttributes[]}> {
+    const data: any = {
+      start_date: startDate,
+      end_date: endDate,
+      products
+    };
+
+    return this.http.post<{message: string, products: ProductAttributes[]}>(`${this.apiUrl}/recalculateAvailability`, data);
+  }
+
   createProduct(product: Omit<ProductAttributes, 'id'>): Observable<{message: string, product: ProductAttributes}> {
     return this.http.post<{message: string, product: ProductAttributes}>(this.apiUrl, product);
   }
