@@ -22,7 +22,7 @@ export class ClientsComponent implements OnInit {
   readonly dialog = inject(MatDialog);
 
   clients: ClientAttributes[] = [];
-  isLoading = false;
+  isLoadingData = false;
   errorMessage = '';
   pagination!: Pagination;
   columns: TableColumn[] = [
@@ -49,9 +49,10 @@ export class ClientsComponent implements OnInit {
   }
 
   loadClients(page: number = 1) {
+    this.isLoadingData = true
     this.clientsService.getClients({page})
       .pipe(
-        finalize(() => this.isLoading = false)
+        finalize(() => this.isLoadingData = false)
       )
       .subscribe({
         next: (response) => {

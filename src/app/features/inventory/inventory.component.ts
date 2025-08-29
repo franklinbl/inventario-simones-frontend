@@ -38,7 +38,7 @@ export class InventoryComponent implements OnInit {
   isModalOpen = false;
   hasNextPage = false;
   hasPreviousPage = false;
-  isLoading = false;
+  isLoadingData = false;
   searchQuery = '';
   errorMessage = '';
 
@@ -72,11 +72,12 @@ export class InventoryComponent implements OnInit {
   }
 
   private loadProducts(page: number = 1): void {
+    this.isLoadingData = true;
     const currentlyDate = new Date().toISOString().split('T')[0];
     this.inventoryService.getAvailableProducts(currentlyDate, currentlyDate, this.searchQuery, { page, limit: 20 })
     .pipe(
       finalize
-      (() => this.isLoading = false)
+      (() => this.isLoadingData = false)
     )
     .subscribe({
       next: (response) => {

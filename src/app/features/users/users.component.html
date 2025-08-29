@@ -7,114 +7,11 @@
     <app-button type="primary" size="md" (click)="createUpdateUser(null)">Nueva Usuario</app-button>
   </div>
 
-  <div class="mb-5">
-    @if (isLoading) {
-      <div class="loading-spinner">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Cargando...</span>
-        </div>
-      </div>
-    } @else if (users.length === 0) {
-      <div class="loading-spinner">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">No hay resultados</span>
-        </div>
-      </div>
-    } @else {
-      <app-table [columns]="columns" [data]="users" ></app-table>
-    }
+  <div class="my-5">
+    <app-table [columns]="columns" [data]="users" [isLoading]="isLoadingData"></app-table>
   </div>
 
   <app-pagination
     [pagination]="pagination"
     (pageChange)="onPageChange($event)">
   </app-pagination>
-
-
-<!-- Modal -->
-<!-- @if (isModalOpen) {
-  <div class="modal-overlay" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-      <h3>{{ modalTitle }}</h3>
-      <button class="close-button" (click)="closeModal()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
-        <div class="form-group">
-          <label for="name">Nombre</label>
-          <input
-            type="text"
-            id="name"
-            formControlName="name"
-            class="form-control"
-            [class.is-invalid]="userForm.get('name')?.invalid && userForm.get('name')?.touched"
-          >
-          @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
-            <div class="error-message">
-              {{ getErrorMessage('name') }}
-            </div>
-            }
-        </div>
-
-        <div class="form-group">
-          <label for="username">Usuario</label>
-          <input
-            type="text"
-            id="username"
-            formControlName="username"
-            class="form-control"
-            [class.is-invalid]="userForm.get('username')?.invalid && userForm.get('username')?.touched"
-          >
-          @if (userForm.get('username')?.invalid && userForm.get('username')?.touched) {
-            <div class="error-message">
-              {{ getErrorMessage('username') }}
-            </div>
-          }
-        </div>
-
-        <div class="form-group">
-          <label for="password">Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            formControlName="password"
-            class="form-control"
-            [class.is-invalid]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
-          >
-          @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
-            <div class="error-message">
-              {{ getErrorMessage('password') }}
-            </div>
-          }
-        </div>
-
-        <div class="form-group">
-          <label for="role_id">Rol</label>
-          <select
-            id="role_id"
-            formControlName="role_id"
-            class="form-control"
-            [class.is-invalid]="userForm.get('role_id')?.invalid && userForm.get('role_id')?.touched"
-          >
-            <option [ngValue]="1">Administrador</option>
-            <option [ngValue]="2">Empleado</option>
-          </select>
-          @if (userForm.get('role_id')?.invalid && userForm.get('role_id')?.touched) {
-            <div class="error-message">
-              {{ getErrorMessage('role_id') }}
-            </div>
-          }
-        </div>
-
-        <div class="form-actions">
-          <button type="button" class="secondary-button" (click)="closeModal()">Cancelar</button>
-          <button type="submit" class="primary-button" [disabled]="userForm.invalid">
-            Guardar
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-} -->

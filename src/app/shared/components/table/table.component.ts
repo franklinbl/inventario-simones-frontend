@@ -18,9 +18,12 @@ export class TableComponent implements OnInit {
 
   @Input() columns: TableColumn[] = [];
   @Input() data: any[] = [];
+  @Input({ required: true }) isLoading: boolean = false;
 
   // Evento para cuando se haga click en acción
   @Output() action = new EventEmitter<any>();
+
+  arraySkeleton = Array(8).fill(0);
 
   ngOnInit() {
     const iconFolder = '/assets/icons/';

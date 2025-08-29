@@ -9,22 +9,8 @@
     }
   </div>
 
-  <div class="mb-5">
-    @if (isLoading) {
-      <div class="loading-spinner">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Cargando...</span>
-        </div>
-      </div>
-    } @else if (rentals.length === 0) {
-      <div class="loading-spinner">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">No hay resultados</span>
-        </div>
-      </div>
-    } @else {
-      <app-table [columns]="columns" [data]="rentals" ></app-table>
-    }
+  <div class="my-5">
+    <app-table [columns]="columns" [data]="rentals" [isLoading]="isLoadingData"></app-table>
   </div>
 
   <app-pagination

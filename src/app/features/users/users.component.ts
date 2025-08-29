@@ -34,9 +34,8 @@ export class UsersComponent implements OnInit {
   readonly matIconRegistry = inject(MatIconRegistry);
   readonly domSanitizer = inject(DomSanitizer);
   users: UserAttributes[] = [];
-  isLoading = false;
+  isLoadingData = false;
   errorMessage = '';
-  isModalOpen = false;
   modalTitle = 'Nuevo Usuario';
   userForm: FormGroup;
   pagination!: Pagination;
@@ -92,12 +91,12 @@ export class UsersComponent implements OnInit {
   }
 
   loadUsers(page: number = 1): void {
-    this.isLoading = true;
+    this.isLoadingData = true;
     this.errorMessage = '';
 
     this.userService.getUsers({page})
       .pipe(
-        finalize(() => this.isLoading = false)
+        finalize(() => this.isLoadingData = false)
       )
       .subscribe({
         next: (response) => {
@@ -142,13 +141,7 @@ export class UsersComponent implements OnInit {
 
   onSubmit(): void {
     if (this.userForm.valid) {
-      this.isLoading = true;
       this.userService.createUser(this.userForm.value)
-        .pipe(
-          finalize(() => {
-            this.isLoading = false;
-          })
-        )
         .subscribe({
           next: () => {
             this.loadUsers();

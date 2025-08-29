@@ -1,53 +1,87 @@
 <div class="p-6 bg-[#fff] border-2 border-[#E9EAE8] rounded-lg">
   <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200 bg-white">
     <table class="w-full text-sm text-left text-gray-600">
+
+      <!-- Encabezado (siempre visible) -->
       <thead class="text-gray-500 text-xs uppercase bg-gray-50">
         <tr>
-          <th *ngFor="let col of columns" class="px-4 py-3">
-            {{ col.label }}
-          </th>
+          @for (col of columns; track $index) {
+            <th class="px-4 py-3">
+              {{ col.label }}
+            </th>
+          }
         </tr>
       </thead>
 
+      <!-- Cuerpo: 3 estados -->
       <tbody class="divide-y divide-gray-100">
-        <tr *ngFor="let row of data" class="hover:bg-gray-50">
-          <td *ngFor="let col of columns" class="px-4 py-3 font-medium text-gray-700">
 
-            <!-- Render dinámico según tipo -->
-            <ng-container [ngSwitch]="col.type">
+        @if (isLoading) {
+           <!-- Estado 1: Cargando (Skeleton) -->
+          @for (_ of arraySkeleton; track $index) {
+            <tr class="animate-pulse">
+              @for (col of columns; track $index) {
+                <td class="px-4 py-3 font-medium text-gray-700">
+                  <div class="h-4 bg-gray-200 rounded"></div>
+                </td>
+              }
+            </tr>
+          }
+         } @else if (!isLoading && data.length > 0) {
+          <!-- Estado 2: Datos disponibles -->
+          @for (row of data; track $index) {
+            <tr class="hover:bg-gray-50">
+              @for (col of columns; track $index) {
+                <td class="px-4 py-3 font-medium text-gray-700">
+                  <ng-container [ngSwitch]="col.type">
+                    <!-- Texto -->
+                    <span *ngSwitchCase="'text'">{{ getNestedValue(row, col.key) || '-' }}</span>
 
-              <!-- Texto -->
-              <span *ngSwitchCase="'text'">{{ getNestedValue(row, col.key) || '-' }}</span>
+                    <!-- Fecha -->
+                    <span *ngSwitchCase="'date'">{{ (getNestedValue(row, col.key) | date:'dd/MM/yyyy') || '-' }}</span>
 
-              <!-- Fecha -->
-              <span *ngSwitchCase="'date'">{{ (getNestedValue(row, col.key) | date:'dd/MM/yyyy') || '-' }}</span>
+                    <!-- Moneda -->
+                    <span *ngSwitchCase="'currency'">{{ (getNestedValue(row, col.key) | currency) || '-' }}</span>
 
-              <!-- Modena -->
-              <span *ngSwitchCase="'currency'">{{ (getNestedValue(row, col.key) | currency) || '-' }}</span>
+                    <!-- Rental Status con chip -->
+                    <span
+                      *ngSwitchCase="'rentalStatus'"
+                      class="px-3 py-1 rounded-full text-xs font-medium"
+                      [ngClass]="getStatusClasses(getNestedValue(row, col.key))"
+                    >
+                      {{ getNestedValue(row, col.key) | statusRentals }}
+                    </span>
 
-              <!-- Rental Status con chip -->
-              <span *ngSwitchCase="'rentalStatus'" class="px-3 py-1 rounded-full text-xs font-medium" [ngClass]="getStatusClasses(getNestedValue(row, col.key))">
-                {{ getNestedValue(row, col.key) | statusRentals }}
-              </span>
+                    <!-- Acciones -->
+                    <div *ngSwitchCase="'action'" class="flex gap-2">
+                      @for (act of col.actions; track $index) {
+                        <button
+                          class="cursor-pointer"
+                          [disabled]="act.disabled ? act.disabled(row) : false"
+                          (click)="onActionClick(act, row)"
+                          matTooltip="{{ act.tooltip || '' }}"
+                          matTooltipPosition="above"
+                        >
+                          <mat-icon class="icon" [svgIcon]="act.icon"></mat-icon>
+                        </button>
+                      }
+                    </div>
 
-              <!-- Acciones -->
-              <div *ngSwitchCase="'action'" class="flex gap-2">
-                <button *ngFor="let act of col.actions"
-                        class="cursor-pointer"
-                        [disabled]="act.disabled ? act.disabled(row) : false"
-                        (click)="onActionClick(act, row)"
-                        matTooltip="{{ act.tooltip || '' }}"
-                        matTooltipPosition="above">
-                  <mat-icon class="icon" [svgIcon]="act.icon"></mat-icon>
-                </button>
-              </div>
-
-              <!-- Default -->
-              <span *ngSwitchDefault>{{ getNestedValue(row, col.key) }}</span>
-            </ng-container>
-
-          </td>
-        </tr>
+                    <!-- Default -->
+                    <span *ngSwitchDefault>{{ getNestedValue(row, col.key) || '-' }}</span>
+                  </ng-container>
+                </td>
+              }
+            </tr>
+          }
+         } @else if (!isLoading && data.length === 0) {
+          <!-- Estado 3: Sin datos -->
+          <tr>
+            <td [attr.colspan]="columns.length" class="px-4 py-6 text-center text-gray-500">
+              No se han encontrado resultados
+            </td>
+          </tr>
+         }
       </tbody>
     </table>
   </div>

@@ -16,6 +16,7 @@ import { TableColumn } from '../../shared/components/table/models/table.model';
 import { TableComponent } from '../../shared/components/table/table.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { Pagination } from '../../shared/interfaces/Pagination.interface';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-rentals',
@@ -43,10 +44,10 @@ export class RentalsComponent implements OnInit {
   products: ProductAttributes[] = [];
   selectedProducts: { product: ProductAttributes; index: number }[] = [];
   isAdmin = false;
-  isLoading = false;
   pagination!: Pagination;
 
   customInputValue: string = '';
+  isLoadingData = false;
 
   columns: TableColumn[] = [
     { key: 'client.name', label: 'Cliente', type: 'text' },
@@ -90,7 +91,12 @@ export class RentalsComponent implements OnInit {
   }
 
   private loadRentals(page: number = 1): void {
-    this.rentalService.getRentals({page, limit: 20}).subscribe({
+    this.isLoadingData = true;
+    this.rentalService.getRentals({page, limit: 20})
+    .pipe(
+      finalize(() => this.isLoadingData = false)
+    )
+    .subscribe({
       next: (response) => {
         this.rentals = response.rentals;
         this.pagination = response.pagination;
