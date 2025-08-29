@@ -63,9 +63,7 @@ export class InventoryComponent implements OnInit {
     }
   ];
 
-  constructor() {
-
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.loadProducts();

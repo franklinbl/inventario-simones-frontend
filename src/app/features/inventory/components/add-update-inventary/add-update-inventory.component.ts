@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { InventoryService } from '../../services/inventory.service';
 import { ProductAttributes } from '../../models/product.model';
+import { AlertService } from '../../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-add-update-inventory',
@@ -12,10 +13,11 @@ import { ProductAttributes } from '../../models/product.model';
   styleUrls: ['./add-update-inventory.component.scss']
 })
 export class AddUpdateProductComponent implements OnInit {
-  productForm: FormGroup;
   private fb = inject(FormBuilder);
   private inventoryService = inject(InventoryService);
+  private alertService = inject(AlertService);
   readonly dialogRef = inject(MatDialogRef<AddUpdateProductComponent>);
+  productForm: FormGroup;
   currentProductId: number | null = null;
   modalTitle = inject(MAT_DIALOG_DATA).title;
   oldProduct: ProductAttributes = inject(MAT_DIALOG_DATA).product;
@@ -54,9 +56,11 @@ export class AddUpdateProductComponent implements OnInit {
         // Actualizar producto existente
         this.inventoryService.updateProduct(this.currentProductId, productData).subscribe({
           next: (updatedProduct) => {
+            this.alertService.success(updatedProduct.message);
             this.closeModal(updatedProduct.product);
           },
           error: (error) => {
+            this.alertService.error(error.message);
             console.error('Error al actualizar producto:', error);
           }
         });
@@ -64,9 +68,11 @@ export class AddUpdateProductComponent implements OnInit {
         // Crear nuevo producto
         this.inventoryService.createProduct(productData).subscribe({
           next: (createdProduct) => {
+            this.alertService.success(createdProduct.message);
             this.closeModal(createdProduct.product);
           },
           error: (error) => {
+            this.alertService.error(error.message);
             console.error('Error al crear producto:', error);
           }
         });

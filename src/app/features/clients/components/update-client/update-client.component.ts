@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ClientAttributes } from '../../Models/client.model';
 import { ClientsService } from '../../services/clients.service';
+import { AlertService } from '../../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-update-client',
@@ -16,6 +17,7 @@ export class UpdateClientComponent implements OnInit {
   @Output() save = new EventEmitter<any>();
   @Output() cancel = new EventEmitter<void>();
   private clientsService = inject(ClientsService);
+  private alertService = inject(AlertService);
   readonly dialogRef = inject(MatDialogRef<UpdateClientComponent>);
   private client: ClientAttributes = inject(MAT_DIALOG_DATA).client;
   modalTitle = inject(MAT_DIALOG_DATA).title;
@@ -43,9 +45,11 @@ export class UpdateClientComponent implements OnInit {
       this.clientsService.updateClient(this.client.id, this.clientForm.value).subscribe({
         next: (response) => {
           this.clientForm.reset();
+          this.alertService.success(response.message);
           this.closeModal(response.client);
         },
         error: (error) => {
+          this.alertService.error(error.message);
           console.error('Error al crear renta:', error);
         }
       })
@@ -63,19 +67,6 @@ export class UpdateClientComponent implements OnInit {
     }
     if (control?.hasError('minlength')) {
       return `Mínimo ${control.errors?.['minlength'].requiredLength} caracteres`;
-    }
-    if (control?.hasError('email')) {
-      return 'Ingrese un email válido';
-    }
-    if (control?.hasError('pattern')) {
-      return 'Ingrese un número de teléfono válido';
-    }
-    if (control?.hasError('min')) {
-      return 'El valor debe ser mayor o igual a 0';
-    }
-    if (control?.hasError('maxStock')) {
-      const error = control.errors?.['maxStock'];
-      return `La cantidad no puede ser mayor al stock disponible (${error.max})`;
     }
     return '';
   }

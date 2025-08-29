@@ -19,6 +19,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { InputFieldComponent } from "../../../../shared/components/input-field/input-field.component";
 import { ValidationService } from '../../../../shared/services/validation.service';
+import { AlertService } from '../../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-add-update-rental',
@@ -47,6 +48,7 @@ export class AddUpdateRentalComponent implements OnInit {
   private inventoryService = inject(InventoryService);
   private clientsService = inject(ClientsService);
   private rentalService = inject(RentalService);
+  private alertService = inject(AlertService);
   private router = inject(Router);
   @Input() private rentalId: number | null = null;
 
@@ -239,25 +241,29 @@ export class AddUpdateRentalComponent implements OnInit {
 
       if (this.isEditing && this.currentRentalId) {
           this.rentalService.updateRental(this.currentRentalId, rentalData, this.clientForm.value).subscribe({
-            next: () => {
+            next: (response) => {
+              this.alertService.success(response.message);
               this.redirectToRentals();
             },
             error: (error) => {
               console.error('Error al actualizar renta:', error);
+              this.alertService.error(error.message);
             }
           });
       } else {
         this.rentalService.createRental(rentalData, this.clientForm.value).subscribe({
-          next: () => {
+          next: (response) => {
             this.clientForm.reset();
             this.clientDniCtrl.patchValue(null);
             this.rentalForm.patchValue({
               client_id: null
             });
+            this.alertService.success(response.message);
             this.redirectToRentals();
           },
           error: (error) => {
             console.error('Error al crear renta:', error);
+            this.alertService.error(error.message);
           }
         });
       }
