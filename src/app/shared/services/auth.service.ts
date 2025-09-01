@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 interface LoginResponse {
-  token: string;
+  accessToken: string;
   user: {
     id: number;
     username: string;
@@ -30,36 +30,49 @@ export class AuthService {
     private http: HttpClient
   ) {
     // Verificar si hay un token guardado al iniciar
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     if (token) {
       this.isAuthenticated.set(true);
     }
   }
 
   login(user: UserLogin): Observable<boolean> {
-    return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`, user)
-      .pipe(
-        tap({
-          next: (response) => {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-            this.isAuthenticated.set(true);
-          },
-          error: (error) => {
-            console.error('Login error:', error);
-            this.isAuthenticated.set(false);
-          }
-        }),
-        map(() => true),
-        catchError(() => of(false))
-      );
+    return this.http.post<LoginResponse>(
+      `${this.API_URL}/auth/login`,
+      user,
+      { withCredentials: true }
+    ).pipe(
+      tap({
+        next: (response) => {
+          localStorage.setItem('accessToken', response.accessToken);
+          localStorage.setItem('user', JSON.stringify(response.user));
+          this.isAuthenticated.set(true);
+        },
+        error: (error) => {
+          console.error('Login error:', error);
+          this.isAuthenticated.set(false);
+        }
+      }),
+      map(() => true),
+      catchError(() => of(false))
+    );
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
     localStorage.removeItem('user');
     this.isAuthenticated.set(false);
-    this.router.navigate(['/login']);
+
+    this.http.post(`${this.API_URL}/auth/logout`, {}, { withCredentials: true })
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/login']);
+        },
+        error: () => {
+          // aunque falle, igual navegamos
+          this.router.navigate(['/login']);
+        }
+      });
   }
 
   isAuthenticated$(): Observable<boolean> {
@@ -69,5 +82,14 @@ export class AuthService {
   getCurrentUser() {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
+  }
+
+  // auth.service.ts
+  refreshToken() {
+    return this.http.post<{ accessToken: string }>(
+      `${this.API_URL}/auth/refreshToken`,
+      {},
+      { withCredentials: true }  // importante para que envíe la cookie
+    );
   }
 }
