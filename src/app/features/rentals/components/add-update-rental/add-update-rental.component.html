@@ -45,7 +45,7 @@
 
         <app-button (click)="searchClient()">Buscar</app-button>
 
-        <app-button type="secondary-outline" (click)="newClient()"
+        <app-button styleType="secondary-outline" (click)="newClient()"
           >Nuevo</app-button
         >
       </div>
@@ -283,7 +283,7 @@
 
 
     <form [formGroup]="rentalForm" class="flex w-full justify-end gap-2 flex-row mt-8 pt-8 border-[#E0E3E1] border-t-1">
-      <app-button type="secondary-outline" (click)="redirectToRentals()">Cancelar</app-button>
+      <app-button styleType="secondary-outline" (click)="redirectToRentals()">Cancelar</app-button>
       <app-button (click)="onSubmit()" [disabled]="selectedProducts.length === 0 || clientForm.invalid || rentalForm.invalid">{{ isEditing ? 'Actualizar' : 'Guardar' }}</app-button>
     </form>
 </div>

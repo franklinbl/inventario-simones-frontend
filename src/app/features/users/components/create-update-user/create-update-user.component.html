@@ -75,8 +75,8 @@
       </div>
 
       <div class="flex mt-6 justify-end gap-2">
-        <app-button size="md" type="secondary-outline" (click)="closeModal()">Cancelar</app-button>
-        <app-button size="md" (click)="onSubmit()" [disabled]="userForm.invalid">Guardar</app-button>
+        <app-button size="md" styleType="secondary-outline" (click)="closeModal()">Cancelar</app-button>
+        <app-button size="md" [disabled]="userForm.invalid" htmlType="submit">Guardar</app-button>
       </div>
     </form>
   </div>

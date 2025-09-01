@@ -98,12 +98,15 @@ export class InventoryComponent implements OnInit {
   createEditProduct (product?: ProductAttributes | null) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.enterAnimationDuration = 0;
+    dialogConfig.width = '450px';
 
-    const title = (!product ? 'Nuevo producto' : 'Actualizar producto')
+    const title = (!product ? 'Nuevo producto' : 'Actualizar producto');
+    let subTitle = product ? 'Agrega un nuevo producto al inventario.' : 'Actualiza un producto del inventario.';
 
     dialogConfig.data = {
       product: product || null,
-      title
+      title,
+      subTitle
     };
 
     const dialogRef =  this.dialog.open(AddUpdateProductComponent, dialogConfig);

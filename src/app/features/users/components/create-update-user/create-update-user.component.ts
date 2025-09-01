@@ -8,6 +8,7 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { InputFieldComponent } from '../../../../shared/components/input-field/input-field.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { AlertService } from '../../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-edit-client',
@@ -29,6 +30,7 @@ export class CreateUpdateUserComponent implements OnInit {
   modalTitle = inject(MAT_DIALOG_DATA).title;
   modalSubTitle = inject(MAT_DIALOG_DATA).subTitle;
   readonly userService = inject(UserService);
+  alertService = inject(AlertService);
   matIconRegistry = inject(MatIconRegistry);
   domSanitizer = inject(DomSanitizer);
   selectOption = [
@@ -72,9 +74,11 @@ export class CreateUpdateUserComponent implements OnInit {
       this.userService.createUser(this.userForm.value).subscribe({
         next: (response) => {
           this.userForm.reset();
+          this.alertService.success(response.message);
           this.closeModal(response.user);
         },
-        error: (error: string) => {
+        error: (error) => {
+          this.alertService.error(error.message);
           console.error('Error al crear renta:', error);
         }
       })

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-type ButtonType = 'primary' | 'secondary' | 'danger' | 'success' | 'secondary-outline';
+type ButtonHtmlType = 'button' | 'submit' | 'reset';
+type ButtonStyle = 'primary' | 'secondary' | 'danger' | 'success' | 'secondary-outline';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 @Component({
@@ -10,7 +11,8 @@ type ButtonSize = 'sm' | 'md' | 'lg';
   styleUrl: './button.component.scss'
 })
 export class ButtonComponent implements OnInit {
-  @Input() type: ButtonType = 'primary';
+  @Input() htmlType: ButtonHtmlType = 'button';
+  @Input() styleType: ButtonStyle = 'primary';
   @Input() size: ButtonSize = 'md';
   @Input() disabled = false;
 
@@ -37,6 +39,6 @@ export class ButtonComponent implements OnInit {
       ? 'opacity-60 cursor-not-allowed'
       : 'cursor-pointer';
 
-    return `${base} ${types[this.type]} ${sizes[this.size]} ${disabled}`;
+    return `${base} ${types[this.styleType]} ${sizes[this.size]} ${disabled}`;
   }
 }

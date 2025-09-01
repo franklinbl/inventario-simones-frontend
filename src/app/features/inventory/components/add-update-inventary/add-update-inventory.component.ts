@@ -4,11 +4,21 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { InventoryService } from '../../services/inventory.service';
 import { ProductAttributes } from '../../models/product.model';
 import { AlertService } from '../../../../shared/services/alert.service';
+import { MatIcon, MatIconRegistry } from '@angular/material/icon';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { InputFieldComponent } from '../../../../shared/components/input-field/input-field.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-add-update-inventory',
   standalone: true,
-  imports: [MatDialogModule, ReactiveFormsModule],
+  imports: [
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatIcon,
+    ButtonComponent,
+    InputFieldComponent
+  ],
   templateUrl: './add-update-inventory.component.html',
   styleUrls: ['./add-update-inventory.component.scss']
 })
@@ -16,10 +26,13 @@ export class AddUpdateProductComponent implements OnInit {
   private fb = inject(FormBuilder);
   private inventoryService = inject(InventoryService);
   private alertService = inject(AlertService);
+  private matIconRegistry = inject(MatIconRegistry);
+  private domSanitizer = inject(DomSanitizer);
   readonly dialogRef = inject(MatDialogRef<AddUpdateProductComponent>);
   productForm: FormGroup;
   currentProductId: number | null = null;
   modalTitle = inject(MAT_DIALOG_DATA).title;
+  modalSubTitle = inject(MAT_DIALOG_DATA).subTitle;
   oldProduct: ProductAttributes = inject(MAT_DIALOG_DATA).product;
   isEditing = false;
 
@@ -34,6 +47,16 @@ export class AddUpdateProductComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const iconFolder = '/assets/icons/';
+    const icons = ['package'];
+
+    icons.forEach(icon => {
+      this.matIconRegistry.addSvgIcon(
+        icon,
+        this.domSanitizer.bypassSecurityTrustResourceUrl(iconFolder + icon + '.svg')
+      );
+    });
+
     if (this.oldProduct) {
       this.isEditing = true;
       this.currentProductId = this.oldProduct.id;
