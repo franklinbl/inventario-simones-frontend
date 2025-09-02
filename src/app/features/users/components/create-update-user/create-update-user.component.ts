@@ -45,7 +45,6 @@ export class CreateUpdateUserComponent implements OnInit {
     this.userForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
       role_id: [null, [Validators.required, this.roleValidator(['1', '2'])]]
     });
   }
@@ -64,7 +63,6 @@ export class CreateUpdateUserComponent implements OnInit {
     this.userForm.patchValue({
       name: this.user?.name || '',
       username: this.user?.username || '',
-      password: this.user?.password || '',
       role_id: (this.user?.role.id).toString() || ''
     });
   }

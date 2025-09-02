@@ -27,4 +27,8 @@ export class UserService {
   createUser(userData: CreateUserDto): Observable<{message: string, user: UserAttributes}> {
     return this.http.post<{message: string, user: UserAttributes}>(`${this.API_URL}/register`, userData);
   }
+
+  resetPassword(userData: UserAttributes): Observable<{message: string, user: UserAttributes}> {
+    return this.http.post<{message: string, user: UserAttributes}>(`${this.API_URL}/resetPassword`, userData);
+  }
 }

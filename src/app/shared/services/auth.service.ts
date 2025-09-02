@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, of, tap, map, catchError } from 'rxjs';
+import { Observable, of, tap, map, catchError, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
@@ -36,7 +36,7 @@ export class AuthService {
     }
   }
 
-  login(user: UserLogin): Observable<boolean> {
+  login(user: UserLogin): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(
       `${this.API_URL}/auth/login`,
       user,
@@ -48,13 +48,14 @@ export class AuthService {
           localStorage.setItem('user', JSON.stringify(response.user));
           this.isAuthenticated.set(true);
         },
-        error: (error) => {
-          console.error('Login error:', error);
+        error: () => {
           this.isAuthenticated.set(false);
         }
       }),
-      map(() => true),
-      catchError(() => of(false))
+      catchError((error) => {
+        this.isAuthenticated.set(false);
+        return throwError(() => error.error);
+      })
     );
   }
 

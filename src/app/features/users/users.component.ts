@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -9,11 +9,12 @@ import { TableColumn } from '../../shared/components/table/models/table.model';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { Pagination } from '../../shared/interfaces/Pagination.interface';
 import { UserAttributes } from './models/users.model';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { CreateUpdateUserComponent } from './components/create-update-user/create-update-user.component';
 import { UserService } from './services/user.service';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { AlertService } from '../../shared/services/alert.service';
 
 @Component({
   selector: 'app-users',
@@ -24,13 +25,15 @@ import { DomSanitizer } from '@angular/platform-browser';
     ReactiveFormsModule,
     ButtonComponent,
     TableComponent,
-    PaginationComponent
+    PaginationComponent,
+    MatDialogModule
   ],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
   readonly dialog = inject(MatDialog);
+  readonly alertService = inject(AlertService);
   readonly matIconRegistry = inject(MatIconRegistry);
   readonly domSanitizer = inject(DomSanitizer);
   users: UserAttributes[] = [];
@@ -39,6 +42,7 @@ export class UsersComponent implements OnInit {
   modalTitle = 'Nuevo Usuario';
   userForm: FormGroup;
   pagination!: Pagination;
+  selectedUser!: UserAttributes;
 
   columns: TableColumn[] = [
     { key: 'name', label: 'Nombre', type: 'text' },
@@ -58,11 +62,14 @@ export class UsersComponent implements OnInit {
         },
         {
           icon: 'rotate-ccw-key',
-          tooltip: 'Restablecer contraseña'
+          tooltip: 'Restablecer contraseña',
+          onClick: (row) => this.openConfirmResetPasswordDialog(row)
         }
       ]
     }
   ];
+
+  @ViewChild('confirmResetPasswordDialog') confirmResetPasswordDialog!: TemplateRef<any>;
 
   constructor(
     private userService: UserService,
@@ -167,5 +174,31 @@ export class UsersComponent implements OnInit {
 
   onPageChange(page: number) {
     this.loadUsers(page);
+  }
+
+  resetPassword(user: UserAttributes): void {
+    this.userService.resetPassword(user).subscribe({
+      next: (response) => {
+        this.alertService.success(response.message);
+      },
+      error: (error) => {
+        this.alertService.error(error.message);
+        console.error('Error al crear renta:', error);
+      }
+    })
+  }
+
+  openConfirmResetPasswordDialog(user: UserAttributes) {
+    this.selectedUser = user;
+
+    const dialogRef = this.dialog.open(this.confirmResetPasswordDialog, {
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'yes') {
+        this.resetPassword(this.selectedUser);
+      }
+    });
   }
 }

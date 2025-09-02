@@ -44,22 +44,6 @@
 
       <div class="mb-3">
         <app-input-field
-          type="password"
-          id="password"
-          formControlName="password"
-          class="form-control"
-          label="Contraseña"
-          placeholder="Ingresa una contraseña"
-        ></app-input-field>
-        @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
-          <div class="text-xs text-red-500 mt-1">
-            {{ getErrorMessage('password') }}
-          </div>
-        }
-      </div>
-
-      <div class="mb-3">
-        <app-input-field
             ngDefaultControl
             type="select"
             [selectOption]="selectOption"

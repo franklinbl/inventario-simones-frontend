@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { AlertComponent } from '../shared/components/toast/alert.component';
 
 @Component({
   selector: 'app-layout',
@@ -10,8 +9,7 @@ import { AlertComponent } from '../shared/components/toast/alert.component';
   imports: [
     CommonModule,
     RouterOutlet,
-    SidebarComponent,
-    AlertComponent
+    SidebarComponent
   ],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']

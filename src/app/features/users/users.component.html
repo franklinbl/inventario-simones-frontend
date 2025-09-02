@@ -15,3 +15,16 @@
     [pagination]="pagination"
     (pageChange)="onPageChange($event)">
   </app-pagination>
+</div>
+
+<ng-template #confirmResetPasswordDialog>
+  <h2 mat-dialog-title>Confirmación</h2>
+  <mat-dialog-content>
+    Está seguro de que desea restablecer la clave del usuario
+    <strong>{{ selectedUser.name }}</strong>?
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <app-button styleType="secondary-outline" size="sm" mat-dialog-close="no">No</app-button>
+    <app-button class="ml-3" styleType="danger" size="sm" mat-dialog-close="yes">Si</app-button>
+  </mat-dialog-actions>
+</ng-template>
