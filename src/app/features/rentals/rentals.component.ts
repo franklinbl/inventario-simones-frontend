@@ -9,7 +9,6 @@ import { ProductAttributes } from '../inventory/models/product.model';
 import { AuthService } from '../../shared/services/auth.service';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { CompletedRentalComponent } from './components/completed-rental/completed-rental.component';
-import { StatusRentalsPipe } from './pipes/status-rentals.pipe';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { TableColumn } from '../../shared/components/table/models/table.model';
@@ -17,6 +16,7 @@ import { TableComponent } from '../../shared/components/table/table.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { Pagination } from '../../shared/interfaces/Pagination.interface';
 import { finalize } from 'rxjs';
+import { AlertService } from '../../shared/services/alert.service';
 
 @Component({
   selector: 'app-rentals',
@@ -37,6 +37,7 @@ import { finalize } from 'rxjs';
 export class RentalsComponent implements OnInit {
   private rentalService = inject(RentalService);
   private authService = inject(AuthService);
+  private alertService = inject(AlertService);
   readonly dialog = inject(MatDialog);
   readonly router = inject(Router);
 
@@ -192,8 +193,7 @@ export class RentalsComponent implements OnInit {
         window.URL.revokeObjectURL(url);
       },
       error: (err) => {
-        console.error('Error al obtener el PDF:', err);
-        alert('Ocurrió un error al intentar abrir el PDF.');
+        this.alertService.error(err.message);
       }
     });
   }
