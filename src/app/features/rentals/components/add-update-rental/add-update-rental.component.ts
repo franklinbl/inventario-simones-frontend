@@ -151,7 +151,8 @@ export class AddUpdateRentalComponent implements OnInit {
       notes: this.oldRental.notes,
       status: this.oldRental.status,
       is_delivery_by_us: this.oldRental.is_delivery_by_us || false,
-      delivery_price: this.oldRental.delivery_price || 0
+      delivery_price: this.oldRental.delivery_price || 0,
+      discount: this.oldRental.discount || 0
     });
 
     this.clientForm.patchValue({
