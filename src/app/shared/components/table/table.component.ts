@@ -5,6 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableColumn } from './models/table.model';
 import { StatusRentalsPipe } from '../../../features/rentals/pipes/status-rentals.pipe';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-table',
@@ -15,6 +16,9 @@ import { StatusRentalsPipe } from '../../../features/rentals/pipes/status-rental
 export class TableComponent implements OnInit {
   matIconRegistry = inject(MatIconRegistry);
   domSanitizer = inject(DomSanitizer);
+  authService = inject(AuthService);
+
+  isAdmin = false;
 
   @Input() columns: TableColumn[] = [];
   @Input() data: any[] = [];
@@ -35,6 +39,9 @@ export class TableComponent implements OnInit {
         this.domSanitizer.bypassSecurityTrustResourceUrl(iconFolder + icon + '.svg')
       );
     });
+
+    const user = this.authService.getCurrentUser();
+    this.isAdmin = user?.role.name === 'Administrador';
   }
 
   onActionClick(action: any, row: any) {
@@ -58,5 +65,12 @@ export class TableComponent implements OnInit {
   getStatusClasses(status: string): string {
     return this.statusClasses[status] || 'bg-blue-100 text-blue-800 border border-blue-300';
   }
+
+  get visibleColumns(): TableColumn[] {
+    return this.isAdmin
+      ? this.columns
+      : this.columns.filter(c => c.type !== 'action');
+  }
+
 
 }

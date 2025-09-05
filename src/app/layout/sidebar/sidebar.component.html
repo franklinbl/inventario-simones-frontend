@@ -19,7 +19,7 @@
     <div class="navigation">
       <h4 class="nav-title">NAVEGACIÓN</h4>
       <ul class="menu-list">
-        @for (item of menuItems; track item.route) {
+        @for (item of visibleMenuItems; track item.route) {
           <li>
             <a routerLink="{{ item.route }}" routerLinkActive="active" class="menu-item">
               <mat-icon [svgIcon]="item.icon"></mat-icon>

@@ -16,8 +16,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class SidebarComponent implements OnInit {
   private matIconRegistry = inject(MatIconRegistry);
   private domSanitizer = inject(DomSanitizer);
+  private authService = inject(AuthService);
+
   isCollapsed = false;
   user: UserAttributes | null = null;
+
   menuItems = [
     {
       name: 'Dashboard',
@@ -47,7 +50,7 @@ export class SidebarComponent implements OnInit {
       name: 'Clientes',
       icon: 'users',
       route: '/clients',
-      permissions: ['Administrador']
+      permissions: ['Administrador', 'Empleado']
     },
     {
       name: 'Usuarios',
@@ -57,10 +60,11 @@ export class SidebarComponent implements OnInit {
     }
   ];
 
-  constructor(private authService: AuthService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.user = this.authService.getCurrentUser();
+    console.log(this.user);
 
     const iconFolder = '/assets/icons/';
     const icons = ['chart-column', 'calendar', 'package', 'users', 'shield-user', 'sparkles', 'panel-right-open', 'panel-right-close', 'log-out'];
@@ -80,4 +84,14 @@ export class SidebarComponent implements OnInit {
   logout() {
     this.authService.logout();
   }
+
+  get visibleMenuItems() {
+    if (!this.user) return [];
+    const userRole = this.user.role.name;
+
+    return this.menuItems.filter(item =>
+      item.permissions.includes(userRole)
+    );
+  }
+
 }

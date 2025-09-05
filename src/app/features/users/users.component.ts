@@ -36,9 +36,9 @@ export class UsersComponent implements OnInit {
   readonly alertService = inject(AlertService);
   readonly matIconRegistry = inject(MatIconRegistry);
   readonly domSanitizer = inject(DomSanitizer);
+
   users: UserAttributes[] = [];
   isLoadingData = false;
-  errorMessage = '';
   modalTitle = 'Nuevo Usuario';
   userForm: FormGroup;
   pagination!: Pagination;
@@ -99,8 +99,6 @@ export class UsersComponent implements OnInit {
 
   loadUsers(page: number = 1): void {
     this.isLoadingData = true;
-    this.errorMessage = '';
-
     this.userService.getUsers({page})
       .pipe(
         finalize(() => this.isLoadingData = false)
@@ -112,7 +110,7 @@ export class UsersComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading users:', error);
-          this.errorMessage = 'Error al cargar los usuarios';
+          this.alertService.error(error.message);
         }
       });
   }
@@ -144,32 +142,6 @@ export class UsersComponent implements OnInit {
         }
       }
     });
-  }
-
-  onSubmit(): void {
-    if (this.userForm.valid) {
-      this.userService.createUser(this.userForm.value)
-        .subscribe({
-          next: () => {
-            this.loadUsers();
-          },
-          error: (error) => {
-            console.error('Error creating user:', error);
-            this.errorMessage = 'Error al crear el usuario';
-          }
-        });
-    }
-  }
-
-  getErrorMessage(controlName: string): string {
-    const control = this.userForm.get(controlName);
-    if (control?.hasError('required')) {
-      return 'Este campo es requerido';
-    }
-    if (control?.hasError('minlength')) {
-      return `Mínimo ${control.getError('minlength').requiredLength} caracteres`;
-    }
-    return '';
   }
 
   onPageChange(page: number) {

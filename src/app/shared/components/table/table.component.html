@@ -5,7 +5,7 @@
       <!-- Encabezado (siempre visible) -->
       <thead class="text-gray-500 text-xs uppercase bg-gray-50">
         <tr>
-          @for (col of columns; track $index) {
+          @for (col of visibleColumns; track $index) {
             <th class="px-4 py-3">
               {{ col.label }}
             </th>
@@ -20,7 +20,7 @@
            <!-- Estado 1: Cargando (Skeleton) -->
           @for (_ of arraySkeleton; track $index) {
             <tr class="animate-pulse">
-              @for (col of columns; track $index) {
+              @for (col of visibleColumns; track $index) {
                 <td class="px-4 py-3 font-medium text-gray-700">
                   <div class="h-4 bg-gray-200 rounded"></div>
                 </td>
@@ -31,7 +31,7 @@
           <!-- Estado 2: Datos disponibles -->
           @for (row of data; track $index) {
             <tr class="hover:bg-gray-50">
-              @for (col of columns; track $index) {
+              @for (col of visibleColumns; track $index) {
                 <td class="px-4 py-3 font-medium text-gray-700">
                   <ng-container [ngSwitch]="col.type">
                     <!-- Texto -->
@@ -80,7 +80,7 @@
          } @else if (!isLoading && data.length === 0) {
           <!-- Estado 3: Sin datos -->
           <tr>
-            <td [attr.colspan]="columns.length" class="px-4 py-6 text-center text-gray-500">
+            <td [attr.colspan]="visibleColumns.length" class="px-4 py-6 text-center text-gray-500">
               No se han encontrado resultados
             </td>
           </tr>

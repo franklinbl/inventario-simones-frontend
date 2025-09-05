@@ -12,6 +12,7 @@ import { TableComponent } from '../../shared/components/table/table.component';
 import { finalize } from 'rxjs';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { Pagination } from '../../shared/interfaces/Pagination.interface';
+import { AlertService } from '../../shared/services/alert.service';
 
 @Component({
   selector: 'app-inventory',
@@ -31,6 +32,8 @@ export class InventoryComponent implements OnInit {
   private inventoryService = inject(InventoryService);
   readonly dialog = inject(MatDialog);
   private authService = inject(AuthService);
+  private alertService = inject(AlertService);
+
   products: ProductAttributes[] = [];
   editingProductId: number | null = null;
   pagination!: Pagination;
@@ -85,8 +88,8 @@ export class InventoryComponent implements OnInit {
         this.pagination = response.pagination;
       },
       error: (error) => {
-        console.error('Error loading users:', error);
-        this.errorMessage = 'Error al cargar los productos';
+        console.error('Error loading inventary:', error.message);
+        this.alertService.error(error.message);
       }
     });
   }

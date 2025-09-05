@@ -9,6 +9,7 @@ import { TableComponent } from '../../shared/components/table/table.component';
 import { finalize } from 'rxjs';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { Pagination } from '../../shared/interfaces/Pagination.interface';
+import { AlertService } from '../../shared/services/alert.service';
 
 @Component({
   selector: 'app-clients',
@@ -20,10 +21,10 @@ import { Pagination } from '../../shared/interfaces/Pagination.interface';
 export class ClientsComponent implements OnInit {
   private clientsService = inject(ClientsService);
   readonly dialog = inject(MatDialog);
+  readonly alertService = inject(AlertService);
 
   clients: ClientAttributes[] = [];
   isLoadingData = false;
-  errorMessage = '';
   pagination!: Pagination;
   columns: TableColumn[] = [
     { key: 'name', label: 'Nombre', type: 'text' },
@@ -61,7 +62,7 @@ export class ClientsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading users:', error);
-          this.errorMessage = 'Error al cargar los Clientes';
+          this.alertService.error(error.message);
         }
       });
   }

@@ -104,6 +104,7 @@ export class RentalsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar rentas:', error);
+        this.alertService.error(error.message);
       }
     });
   }
